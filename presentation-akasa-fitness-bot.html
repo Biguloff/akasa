@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akasa — AI Фитнес-Ассистент</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-card-hover: #1a1a26;
+            --accent-lime: #c8ff2e;
+            --accent-lime-dim: rgba(200, 255, 46, 0.15);
+            --accent-orange: #ff6b2e;
+            --accent-gradient: linear-gradient(135deg, #c8ff2e 0%, #7bff2e 50%, #2effb2 100%);
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --border: rgba(255, 255, 255, 0.06);
+            --radius: 20px;
+            --radius-sm: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ── Noise overlay ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+
+        /* ── Container ── */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 clamp(20px, 5vw, 60px);
+        }
+
+        /* ── Section base ── */
+        section {
+            padding: clamp(60px, 10vw, 140px) 0;
+            position: relative;
+        }
+
+        /* ── Tag label ── */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            border: 1px solid rgba(200, 255, 46, 0.25);
+            background: rgba(200, 255, 46, 0.06);
+            color: var(--accent-lime);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .tag::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-lime);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        /* ── Section title ── */
+        .section-title {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 48px;
+        }
+
+        /* ═══════════════════════════════════
+           HERO
+        ═══════════════════════════════════ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(200, 255, 46, 0.08) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            pointer-events: none;
+            animation: hero-glow 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes hero-glow {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+            100% { transform: translate(-80px, 60px) scale(1.2); opacity: 1; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-badge span {
+            color: var(--accent-lime);
+            font-weight: 600;
+        }
+
+        .hero h1 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(2.4rem, 6.5vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 28px;
+            animation: fadeInUp 0.8s ease-out 0.15s both;
+        }
+
+        .hero h1 .accent {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: clamp(1.05rem, 2vw, 1.3rem);
+            color: var(--text-secondary);
+            max-width: 560px;
+            line-height: 1.7;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 36px;
+            border-radius: 100px;
+            background: var(--accent-lime);
+            color: #0a0a0f;
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: fadeInUp 0.8s ease-out 0.45s both;
+            cursor: pointer;
+            border: none;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(200, 255, 46, 0.3);
+        }
+
+        .hero-cta svg {
+            transition: transform 0.3s ease;
+        }
+
+        .hero-cta:hover svg {
+            transform: translateX(4px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: clamp(30px, 5vw, 60px);
+            margin-top: 80px;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .hero-stat {
+            position: relative;
+        }
+
+        .hero-stat::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+        }
+
+        .hero-stat {
+            padding-left: 20px;
+        }
+
+        .hero-stat-value {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 700;
+            color: var(--accent-lime);
+        }
+
+        .hero-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ═══════════════════════════════════
+           PROBLEM (AIDA: Interest)
+        ═══════════════════════════════════ */
+        .problem {
+            background: linear-gradient(180deg, var(--bg-deep) 0%, #0d0d15 100%);
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-orange), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .problem-card:hover::before {
+            opacity: 1;
+        }
+
+        .problem-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 107, 46, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .problem-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 107, 46, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+        }
+
+        .problem-card h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .problem-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .problem-bigstat {
+            text-align: center;
+            margin-top: 60px;
+            padding: 48px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(255, 107, 46, 0.06) 0%, rgba(255, 46, 46, 0.04) 100%);
+            border: 1px solid rgba(255, 107, 46, 0.1);
+        }
+
+        .problem-bigstat-number {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b2e, #ff2e5b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .problem-bigstat-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
+        /* ═══════════════════════════════════
+           SOLUTION (AIDA: Desire)
+        ═══════════════════════════════════ */
+        .solution-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px 28px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .step-card:hover {
+            border-color: rgba(200, 255, 46, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .step-number {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 20px;
+            opacity: 0.4;
+        }
+
+        .step-card h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .step-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════
+           FEATURES
+        ═══════════════════════════════════ */
+        .features {
+            background: linear-gradient(180deg, #0d0d15 0%, var(--bg-deep) 100%);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .features-grid { grid-template-columns: 1fr; }
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius);
+            background: radial-gradient(circle at 50% 0%, rgba(200, 255, 46, 0.05) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .feature-card:hover::after {
+            opacity: 1;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(200, 255, 46, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .feature-card.featured {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(200, 255, 46, 0.04), rgba(46, 255, 178, 0.02));
+            border-color: rgba(200, 255, 46, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            .feature-card.featured { grid-column: span 1; }
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-sm);
+            background: var(--accent-lime-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ═══════════════════════════════════
+           BOT DEMO (Chat mockup)
+        ═══════════════════════════════════ */
+        .demo {
+            padding: clamp(60px, 10vw, 140px) 0;
+        }
+
+        .demo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        @media (max-width: 900px) {
+            .demo-wrapper { flex-direction: column; }
+        }
+
+        .demo-text {
+            flex: 1;
+        }
+
+        .demo-chat {
+            flex: 1;
+            max-width: 420px;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #0a0a0f;
+        }
+
+        .chat-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .chat-status {
+            font-size: 0.75rem;
+            color: var(--accent-lime);
+        }
+
+        .chat-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 360px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            animation: msgAppear 0.5s ease-out both;
+        }
+
+        .msg-bot {
+            background: rgba(200, 255, 46, 0.08);
+            border: 1px solid rgba(200, 255, 46, 0.12);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-user {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg:nth-child(1) { animation-delay: 0.2s; }
+        .msg:nth-child(2) { animation-delay: 0.6s; }
+        .msg:nth-child(3) { animation-delay: 1.0s; }
+        .msg:nth-child(4) { animation-delay: 1.4s; }
+        .msg:nth-child(5) { animation-delay: 1.8s; }
+
+        @keyframes msgAppear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ═══════════════════════════════════
+           BENEFITS FOR AKASA
+        ═══════════════════════════════════ */
+        .benefits {
+            background: linear-gradient(180deg, var(--bg-deep) 0%, #0d0d15 100%);
+        }
+
+        .benefits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .benefit-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 28px 32px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.35s ease;
+        }
+
+        .benefit-row:hover {
+            border-color: rgba(200, 255, 46, 0.15);
+            transform: translateX(8px);
+        }
+
+        .benefit-marker {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent-lime-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .benefit-content h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .benefit-content p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        /* ═══════════════════════════════════
+           ROADMAP
+        ═══════════════════════════════════ */
+        .roadmap-timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-lime), var(--accent-orange), #ff2e5b);
+            border-radius: 2px;
+        }
+
+        .roadmap-phase {
+            position: relative;
+            margin-bottom: 48px;
+            padding: 32px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.35s ease;
+        }
+
+        .roadmap-phase:hover {
+            border-color: rgba(200, 255, 46, 0.15);
+        }
+
+        .roadmap-phase::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 36px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-lime);
+            border: 3px solid var(--bg-deep);
+        }
+
+        .roadmap-phase:nth-child(2)::before { background: var(--accent-orange); }
+        .roadmap-phase:nth-child(3)::before { background: #ff2e5b; }
+
+        .phase-label {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-lime);
+            margin-bottom: 8px;
+        }
+
+        .roadmap-phase:nth-child(2) .phase-label { color: var(--accent-orange); }
+        .roadmap-phase:nth-child(3) .phase-label { color: #ff2e5b; }
+
+        .roadmap-phase h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .phase-features {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .phase-features li {
+            padding: 6px 14px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* ═══════════════════════════════════
+           TECH STACK
+        ═══════════════════════════════════ */
+        .tech {
+            background: linear-gradient(180deg, #0d0d15 0%, var(--bg-deep) 100%);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .tech-item {
+            padding: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            border-color: rgba(200, 255, 46, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .tech-item-name {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .tech-item-role {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* ═══════════════════════════════════
+           CTA (AIDA: Action)
+        ═══════════════════════════════════ */
+        .cta-section {
+            text-align: center;
+            padding: clamp(80px, 12vw, 160px) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(200, 255, 46, 0.06) 0%, transparent 70%);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .cta-title {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .cta-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .cta-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 40px;
+            border-radius: 100px;
+            background: var(--accent-lime);
+            color: #0a0a0f;
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            border: none;
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px rgba(200, 255, 46, 0.35);
+        }
+
+        .cta-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 40px;
+            border-radius: 100px;
+            background: transparent;
+            color: var(--text-primary);
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.35s ease;
+            cursor: pointer;
+        }
+
+        .cta-secondary:hover {
+            border-color: var(--accent-lime);
+            color: var(--accent-lime);
+        }
+
+        /* ═══════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════ */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        footer .footer-brand {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* ═══════════════════════════════════
+           ANIMATIONS
+        ═══════════════════════════════════ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════ */
+        @media (max-width: 768px) {
+            .hero-stats {
+                flex-direction: column;
+                gap: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ HERO (AIDA: Attention) ═══ -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-badge">
+                Коммерческое предложение для <span>Akasa</span>
+            </div>
+            <h1>
+                AI-ассистент,<br>
+                который <span class="accent">продаёт</span><br>
+                за вас
+            </h1>
+            <p class="hero-desc">
+                Персональный фитнес-бот, который превращает каждого покупателя спортивного питания
+                в постоянного клиента — через AI-рекомендации, трекинг прогресса и умные продажи продукции Akasa.
+            </p>
+            <a href="#contact" class="hero-cta">
+                Обсудить проект
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">78%</div>
+                    <div class="hero-stat-label">бросают без сопровождения</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">x3.2</div>
+                    <div class="hero-stat-label">рост LTV с персонализацией</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">0</div>
+                    <div class="hero-stat-label">конкурентов с AI-ботом в СНГ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ PROBLEM (AIDA: Interest) ═══ -->
+<section class="problem">
+    <div class="container">
+        <div class="reveal">
+            <div class="tag">Проблема</div>
+            <h2 class="section-title">Почему клиенты<br>не возвращаются</h2>
+            <p class="section-subtitle">Продукт отличный. Но без сопровождения люди не получают результата — и уходят.</p>
+        </div>
+
+        <div class="problem-grid reveal">
+            <div class="problem-card">
+                <div class="problem-icon">🎯</div>
+                <h3>Нет персонализации</h3>
+                <p>Купил протеин — но сколько пить? Когда? В какой комбинации с едой? Общие рекомендации на упаковке не работают.</p>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon">📉</div>
+                <h3>Нет прогресса</h3>
+                <p>Тренируется без плана, ест на глаз. Через месяц не видит результата и решает, что «не работает».</p>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon">👻</div>
+                <h3>Нет мотивации</h3>
+                <p>Никто не спрашивает «как дела?». Никто не напоминает. Привычка не формируется — клиент пропадает.</p>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon">🔄</div>
+                <h3>Одноразовая покупка</h3>
+                <p>Нет причины вернуться. Нет связи с брендом после кассы. LTV = стоимость одной банки.</p>
+            </div>
+        </div>
+
+        <div class="problem-bigstat reveal">
+            <div class="problem-bigstat-number">78%</div>
+            <div class="problem-bigstat-text">покупателей спортпитания прекращают тренировки в первые 3 месяца</div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ SOLUTION (AIDA: Desire — How it works) ═══ -->
+<section class="solution">
+    <div class="container">
+        <div class="reveal">
+            <div class="tag">Решение</div>
+            <h2 class="section-title">Как это<br>работает</h2>
+            <p class="section-subtitle">Четыре шага от первого контакта до постоянного клиента</p>
+        </div>
+
+        <div class="solution-steps reveal">
+            <div class="step-card">
+                <div class="step-number">01</div>
+                <h3>Фото и цели</h3>
+                <p>Пользователь загружает фото тела, указывает параметры и цели. AI анализирует текущую форму.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">02</div>
+                <h3>Персональный план</h3>
+                <p>AI генерирует план питания и тренировок. Продукция Akasa органично вписана в рацион.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">03</div>
+                <h3>Сопровождение</h3>
+                <p>Бот сам пишет пользователю, спрашивает о прогрессе, мотивирует и корректирует план.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">04</div>
+                <h3>Результат</h3>
+                <p>Трекинг прогресса с графиками, фото до/после. Пользователь видит результат — покупает снова.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FEATURES (AIDA: Desire — Details) ═══ -->
+<section class="features">
+    <div class="container">
+        <div class="reveal">
+            <div class="tag">Функции</div>
+            <h2 class="section-title">Всё, что нужно<br>для результата</h2>
+            <p class="section-subtitle">Полный набор AI-инструментов в одном боте</p>
+        </div>
+
+        <div class="features-grid reveal">
+            <div class="feature-card featured">
+                <div class="feature-icon">📸</div>
+                <h3>AI-анализ тела по фото</h3>
+                <p>Пользователь загружает фото — AI оценивает текущую форму, определяет процент жира, даёт рекомендации по целям. Технология computer vision через fal.ai.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🍽️</div>
+                <h3>Распознавание еды</h3>
+                <p>Сфотографировал тарелку — получил разбор: калории, белки, жиры, углеводы. Мгновенно.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💪</div>
+                <h3>Планы тренировок</h3>
+                <p>Персональная программа под цели, уровень и доступное оборудование. Адаптируется по мере прогресса.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Трекинг прогресса</h3>
+                <p>Графики веса и замеров, фото-дневник до/после, еженедельные отчёты с аналитикой.</p>
+            </div>
+            <div class="feature-card featured">
+                <div class="feature-icon">🛒</div>
+                <h3>Каталог продукции Akasa</h3>
+                <p>Умные рекомендации продукции Akasa в контексте персонального плана питания. Не реклама, а часть программы. Прямые ссылки на покупку.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <h3>Умные напоминания</h3>
+                <p>Приём пищи, тренировка, добавки. Бот сам пишет и спрашивает о прогрессе.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎁</div>
+                <h3>Реферальная система</h3>
+                <p>Пригласи друга — получи бонус. Виральный рост с геймификацией и уровнями.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔑</div>
+                <h3>Единый аккаунт</h3>
+                <p>Один SSO-логин для бота, сайта, приложения и всех сервисов экосистемы Akasa.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ BOT DEMO ═══ -->
+<section class="demo">
+    <div class="container">
+        <div class="demo-wrapper reveal">
+            <div class="demo-text">
+                <div class="tag">Демо</div>
+                <h2 class="section-title">Бот, который<br>сам продаёт</h2>
+                <p class="section-subtitle">Проактивное общение — ключевое отличие. Бот не ждёт, пока напишут. Он сам инициирует диалог в нужный момент.</p>
+                <div style="margin-top: 32px;">
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.8;">
+                        <strong style="color: var(--accent-lime);">Утром:</strong> план питания на день<br>
+                        <strong style="color: var(--accent-lime);">Перед тренировкой:</strong> напоминание и разминка<br>
+                        <strong style="color: var(--accent-lime);">После еды:</strong> анализ фото и БЖУ<br>
+                        <strong style="color: var(--accent-lime);">Вечером:</strong> итог дня и мотивация<br>
+                        <strong style="color: var(--accent-orange);">При отсутствии:</strong> «Тебя не было 3 дня. Всё ок?»
+                    </p>
+                </div>
+            </div>
+            <div class="demo-chat">
+                <div class="chat-header">
+                    <div class="chat-avatar">A</div>
+                    <div>
+                        <div class="chat-name">Akasa Fitness AI</div>
+                        <div class="chat-status">онлайн</div>
+                    </div>
+                </div>
+                <div class="chat-body">
+                    <div class="msg msg-bot">Доброе утро! Вчера ты отлично потренировался 💪 Сегодня день ног. Готов?</div>
+                    <div class="msg msg-user">Да, буду через час в зале</div>
+                    <div class="msg msg-bot">Отлично! Не забудь принять Akasa Pre-Workout за 30 минут до тренировки. Вот твоя программа на сегодня:</div>
+                    <div class="msg msg-bot">🦵 Приседания 4x10<br>🦵 Жим ногами 3x12<br>🦵 Выпады 3x10<br>🦵 Сгибания 3x12<br><br>Ориентировочное время: 55 мин</div>
+                    <div class="msg msg-user">Пойдёт! А что на обед?</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ BENEFITS (AIDA: Desire — For Akasa) ═══ -->
+<section class="benefits">
+    <div class="container">
+        <div class="reveal">
+            <div class="tag">Для Akasa</div>
+            <h2 class="section-title">Что это даёт<br>вашему бизнесу</h2>
+            <p class="section-subtitle">Не просто бот, а канал удержания и повторных продаж</p>
+        </div>
+
+        <div class="benefits-list reveal">
+            <div class="benefit-row">
+                <div class="benefit-marker">📈</div>
+                <div class="benefit-content">
+                    <h3>Рост повторных продаж</h3>
+                    <p>Бот рекомендует продукцию Akasa в контексте плана — не как рекламу, а как часть программы достижения целей</p>
+                </div>
+            </div>
+            <div class="benefit-row">
+                <div class="benefit-marker">♾️</div>
+                <div class="benefit-content">
+                    <h3>Увеличение LTV клиента</h3>
+                    <p>Из одноразового покупателя — в постоянного пользователя экосистемы, который покупает месяцами</p>
+                </div>
+            </div>
+            <div class="benefit-row">
+                <div class="benefit-marker">🧠</div>
+                <div class="benefit-content">
+                    <h3>Данные о клиентах</h3>
+                    <p>Цели, диета, активность, предпочтения — точный портрет для маркетинга и разработки новых продуктов</p>
+                </div>
+            </div>
+            <div class="benefit-row">
+                <div class="benefit-marker">🚀</div>
+                <div class="benefit-content">
+                    <h3>Виральный рост</h3>
+                    <p>Реферальная система + результаты «до/после» = органическое привлечение без рекламных бюджетов</p>
+                </div>
+            </div>
+            <div class="benefit-row">
+                <div class="benefit-marker">🏆</div>
+                <div class="benefit-content">
+                    <h3>Конкурентный барьер</h3>
+                    <p>Первый производитель спортпитания с персональным AI-ассистентом в СНГ. Конкуренты не смогут быстро скопировать</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ ROADMAP ═══ -->
+<section class="roadmap">
+    <div class="container">
+        <div class="reveal">
+            <div class="tag">Дорожная карта</div>
+            <h2 class="section-title">Этапы<br>запуска</h2>
+            <p class="section-subtitle">От Telegram-бота до полноценной платформы</p>
+        </div>
+
+        <div class="roadmap-timeline reveal">
+            <div class="roadmap-phase">
+                <div class="phase-label">Фаза 1 — Telegram MVP</div>
+                <h3>Рабочий бот с AI-функционалом</h3>
+                <ul class="phase-features">
+                    <li>Telegram-бот + SSO</li>
+                    <li>AI-анализ фото тела</li>
+                    <li>Планы питания и тренировок</li>
+                    <li>Распознавание еды</li>
+                    <li>Каталог Akasa</li>
+                    <li>Проактивные сообщения</li>
+                    <li>Базовый трекинг</li>
+                </ul>
+            </div>
+            <div class="roadmap-phase">
+                <div class="phase-label">Фаза 2 — Веб-приложение</div>
+                <h3>Расширение аудитории</h3>
+                <ul class="phase-features">
+                    <li>Полный веб-интерфейс</li>
+                    <li>Расширенная аналитика</li>
+                    <li>Детальные графики</li>
+                    <li>Реферальная система</li>
+                    <li>Админ-панель Akasa</li>
+                </ul>
+            </div>
+            <div class="roadmap-phase">
+                <div class="phase-label">Фаза 3 — Нативное приложение</div>
+                <h3>Полноценная платформа</h3>
+                <ul class="phase-features">
+                    <li>iOS + Android</li>
+                    <li>Push-уведомления</li>
+                    <li>Офлайн-режим</li>
+                    <li>Apple Health / Google Fit</li>
+                    <li>Геймификация</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ TECH STACK ═══ -->
+<section class="tech">
+    <div class="container">
+        <div class="reveal">
+            <div class="tag">Технологии</div>
+            <h2 class="section-title">Стек</h2>
+            <p class="section-subtitle">Проверенные технологии для надёжного и масштабируемого продукта</p>
+        </div>
+
+        <div class="tech-grid reveal">
+            <div class="tech-item">
+                <div class="tech-item-name">fal.ai</div>
+                <div class="tech-item-role">Computer Vision</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-name">OpenRouter</div>
+                <div class="tech-item-role">LLM / Рекомендации</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-name">Python + FastAPI</div>
+                <div class="tech-item-role">Backend API</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-name">PostgreSQL</div>
+                <div class="tech-item-role">База данных</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-name">Redis</div>
+                <div class="tech-item-role">Кэш и очереди</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-name">aiogram</div>
+                <div class="tech-item-role">Telegram Bot</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-name">React / Next.js</div>
+                <div class="tech-item-role">Веб-фронтенд</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-name">OAuth 2.0</div>
+                <div class="tech-item-role">SSO авторизация</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-name">Docker</div>
+                <div class="tech-item-role">Инфраструктура</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-item-name">S3 Storage</div>
+                <div class="tech-item-role">Хранение медиа</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CTA (AIDA: Action) ═══ -->
+<section class="cta-section" id="contact">
+    <div class="container reveal">
+        <h2 class="cta-title">Готовы обсудить<br><span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">запуск?</span></h2>
+        <p class="cta-desc">30 минут — чтобы определить приоритеты, согласовать этапы и начать превращать покупателей в постоянных клиентов.</p>
+        <div class="cta-buttons">
+            <a href="mailto:hello@example.com" class="cta-primary">
+                Назначить встречу
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="mailto:hello@example.com" class="cta-secondary">
+                Скачать КП
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+    <div class="container">
+        <p class="footer-brand">Akasa x AI Fitness</p>
+        <p>Конфиденциальное предложение. 2026</p>
+    </div>
+</footer>
+
+<!-- ═══ Scroll reveal ═══ -->
+<script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -60px 0px'
+    });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

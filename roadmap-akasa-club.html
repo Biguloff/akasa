@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akasa Club — Архитектура, Ресерч и Роадмап</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #08080c;
+            --bg-surface: #0f0f16;
+            --bg-card: #14141e;
+            --bg-card-alt: #191924;
+            --bg-code: #0c0c14;
+            --accent-1: #a8e532;
+            --accent-2: #32e5a8;
+            --accent-3: #e5a832;
+            --accent-4: #e53272;
+            --accent-gradient: linear-gradient(135deg, #a8e532 0%, #32e5a8 100%);
+            --accent-warm: linear-gradient(135deg, #e5a832 0%, #e53272 100%);
+            --text-1: #eeeef2;
+            --text-2: #9494a8;
+            --text-3: #5a5a70;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(168, 229, 50, 0.15);
+            --r: 16px;
+            --r-lg: 24px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-1);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Grid noise ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.018;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-size: 256px;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--text-3); border-radius: 3px; }
+
+        .wrap { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
+
+        /* ── Nav ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 14px 0;
+            background: rgba(8, 8, 12, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .nav-logo span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-2);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            transition: color 0.25s;
+        }
+
+        .nav-links a:hover { color: var(--accent-1); }
+
+        @media (max-width: 700px) {
+            .nav-links { display: none; }
+        }
+
+        /* ── Section ── */
+        section { padding: clamp(60px, 10vw, 120px) 0; position: relative; }
+
+        .stag { padding-top: 100px; }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 13px;
+            border-radius: 100px;
+            border: 1px solid var(--border-accent);
+            background: rgba(168, 229, 50, 0.05);
+            color: var(--accent-1);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .tag::before {
+            content: '';
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--accent-1);
+        }
+
+        .tag.warm {
+            border-color: rgba(229, 168, 50, 0.2);
+            background: rgba(229, 168, 50, 0.05);
+            color: var(--accent-3);
+        }
+
+        .tag.warm::before { background: var(--accent-3); }
+
+        .tag.red {
+            border-color: rgba(229, 50, 114, 0.2);
+            background: rgba(229, 50, 114, 0.05);
+            color: var(--accent-4);
+        }
+
+        .tag.red::before { background: var(--accent-4); }
+
+        .tag.teal {
+            border-color: rgba(50, 229, 168, 0.2);
+            background: rgba(50, 229, 168, 0.05);
+            color: var(--accent-2);
+        }
+
+        .tag.teal::before { background: var(--accent-2); }
+
+        h2 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+            color: var(--text-2);
+            max-width: 580px;
+            margin-bottom: 40px;
+        }
+
+        /* ── Hero ── */
+        .hero-doc {
+            padding: 140px 0 80px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-doc h1 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.8rem);
+            font-weight: 800;
+            line-height: 1.08;
+            margin-bottom: 20px;
+        }
+
+        .hero-doc h1 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 32px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .hero-meta-item {
+            font-size: 0.82rem;
+            color: var(--text-3);
+        }
+
+        .hero-meta-item strong {
+            color: var(--text-2);
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        /* ── TOC ── */
+        .toc {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 32px;
+            margin: 40px 0;
+        }
+
+        .toc h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .toc-list {
+            list-style: none;
+            columns: 2;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) { .toc-list { columns: 1; } }
+
+        .toc-list li {
+            margin-bottom: 8px;
+        }
+
+        .toc-list a {
+            color: var(--text-1);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        .toc-list a:hover { color: var(--accent-1); }
+
+        .toc-list a::before {
+            content: attr(data-num);
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-3);
+            width: 24px;
+            flex-shrink: 0;
+        }
+
+        /* ── Competitor table ── */
+        .comp-table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        thead th {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-3);
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-2);
+            vertical-align: top;
+        }
+
+        tbody tr:hover td { background: rgba(168, 229, 50, 0.02); }
+
+        .check { color: var(--accent-1); font-weight: 700; }
+        .cross { color: var(--accent-4); }
+        .partial { color: var(--accent-3); }
+
+        /* ── Concept cards ── */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .concept-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 32px;
+            transition: all 0.35s ease;
+        }
+
+        .concept-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-3px);
+        }
+
+        .concept-card h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .concept-card p {
+            font-size: 0.88rem;
+            color: var(--text-2);
+        }
+
+        .concept-card ul {
+            margin-top: 12px;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .concept-card li {
+            font-size: 0.85rem;
+            color: var(--text-2);
+            padding: 4px 0;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .concept-card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            opacity: 0.5;
+        }
+
+        /* ── Architecture diagram ── */
+        .arch-diagram {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: clamp(24px, 4vw, 48px);
+            overflow-x: auto;
+            margin: 32px 0;
+        }
+
+        .arch-diagram pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(0.65rem, 1.2vw, 0.82rem);
+            line-height: 1.6;
+            color: var(--text-2);
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .arch-diagram .hl-green { color: var(--accent-1); }
+        .arch-diagram .hl-teal { color: var(--accent-2); }
+        .arch-diagram .hl-gold { color: var(--accent-3); }
+        .arch-diagram .hl-pink { color: var(--accent-4); }
+        .arch-diagram .hl-dim { color: var(--text-3); }
+
+        /* ── DB Schema ── */
+        .schema-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .schema-table {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            overflow: hidden;
+        }
+
+        .schema-table-header {
+            padding: 14px 20px;
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .schema-table-header .icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-1);
+        }
+
+        .schema-fields {
+            padding: 12px 0;
+        }
+
+        .schema-field {
+            padding: 5px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+        }
+
+        .schema-field:hover { background: rgba(255, 255, 255, 0.02); }
+
+        .field-name {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-1);
+            font-weight: 500;
+        }
+
+        .field-type {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-3);
+            font-size: 0.72rem;
+        }
+
+        .field-pk { color: var(--accent-1); }
+        .field-fk { color: var(--accent-3); }
+
+        /* ── Roadmap timeline ── */
+        .roadmap-vertical {
+            position: relative;
+            padding-left: 48px;
+        }
+
+        .roadmap-vertical::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-1), var(--accent-2), var(--accent-3), var(--accent-4));
+        }
+
+        .rm-phase {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .rm-dot {
+            position: absolute;
+            left: -37px;
+            top: 24px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid var(--bg-deep);
+        }
+
+        .rm-phase:nth-child(1) .rm-dot { background: var(--accent-1); }
+        .rm-phase:nth-child(2) .rm-dot { background: var(--accent-2); }
+        .rm-phase:nth-child(3) .rm-dot { background: var(--accent-3); }
+        .rm-phase:nth-child(4) .rm-dot { background: var(--accent-4); }
+        .rm-phase:nth-child(5) .rm-dot { background: var(--accent-1); }
+
+        .rm-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 28px;
+        }
+
+        .rm-card:hover { border-color: var(--border-accent); }
+
+        .rm-time {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-3);
+            margin-bottom: 6px;
+        }
+
+        .rm-card h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .rm-features {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .rm-features li {
+            padding: 5px 12px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            font-size: 0.78rem;
+            color: var(--text-2);
+        }
+
+        .rm-deliverable {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            font-size: 0.82rem;
+            color: var(--text-3);
+        }
+
+        .rm-deliverable strong {
+            color: var(--accent-1);
+        }
+
+        /* ── Price box ── */
+        .price-box {
+            background: linear-gradient(135deg, rgba(168, 229, 50, 0.06), rgba(50, 229, 168, 0.03));
+            border: 1px solid var(--border-accent);
+            border-radius: var(--r-lg);
+            padding: 40px;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .price-value {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .price-label {
+            font-size: 1rem;
+            color: var(--text-2);
+            margin-top: 8px;
+        }
+
+        .price-note {
+            font-size: 0.82rem;
+            color: var(--text-3);
+            margin-top: 16px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ── Info callout ── */
+        .callout {
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent-1);
+            border-radius: 0 var(--r) var(--r) 0;
+            padding: 20px 24px;
+            margin: 24px 0;
+            font-size: 0.88rem;
+            color: var(--text-2);
+        }
+
+        .callout strong { color: var(--text-1); }
+
+        /* ── Reveal ── */
+        .rv {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: all 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .rv.vis {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 0.75rem;
+            color: var(--text-3);
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="wrap nav-inner">
+        <div class="nav-logo"><span>Akasa</span> Club</div>
+        <ul class="nav-links">
+            <li><a href="#research">Ресерч</a></li>
+            <li><a href="#concept">Концепция</a></li>
+            <li><a href="#arch">Архитектура</a></li>
+            <li><a href="#db">База данных</a></li>
+            <li><a href="#roadmap">Роадмап</a></li>
+            <li><a href="#price">Стоимость</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-doc">
+    <div class="wrap">
+        <div class="tag">Техническая документация</div>
+        <h1>Akasa <span>Club</span><br>Архитектура и Роадмап</h1>
+        <p class="subtitle">Единая клубная экосистема: Telegram-бот, WebApp, будущее нативное приложение. Членство, AI-фитнес, продукция Akasa.</p>
+        <div class="hero-meta">
+            <div class="hero-meta-item">
+                <strong>Документ</strong>
+                Технический ресерч + Роадмап
+            </div>
+            <div class="hero-meta-item">
+                <strong>Дата</strong>
+                Март 2026
+            </div>
+            <div class="hero-meta-item">
+                <strong>Версия</strong>
+                1.0
+            </div>
+        </div>
+
+        <div class="toc">
+            <h3>Содержание</h3>
+            <ul class="toc-list">
+                <li><a href="#research" data-num="01">Анализ конкурентов</a></li>
+                <li><a href="#concept" data-num="02">Концепция Akasa Club</a></li>
+                <li><a href="#arch" data-num="03">Архитектура приложения</a></li>
+                <li><a href="#db" data-num="04">Структура базы данных</a></li>
+                <li><a href="#sso" data-num="05">Единый аккаунт (SSO)</a></li>
+                <li><a href="#ai" data-num="06">AI-стек и API</a></li>
+                <li><a href="#roadmap" data-num="07">Роадмап разработки</a></li>
+                <li><a href="#price" data-num="08">Стоимость и сроки</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     01. COMPETITOR RESEARCH
+═══════════════════════════════════════ -->
+<section id="research" class="stag">
+    <div class="wrap">
+        <div class="rv">
+            <div class="tag warm">01 — Ресерч</div>
+            <h2>Анализ конкурентов</h2>
+            <p class="subtitle">Ни один производитель спортпитания в СНГ не имеет AI-фитнес экосистему. Это окно возможностей.</p>
+        </div>
+
+        <div class="comp-table-wrap rv">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Продукт</th>
+                        <th>Тип</th>
+                        <th>AI</th>
+                        <th>Telegram</th>
+                        <th>Клуб / Членство</th>
+                        <th>Каталог продукции</th>
+                        <th>Единый аккаунт</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>MyProtein</strong></td>
+                        <td>Бренд + Приложение</td>
+                        <td class="cross">Нет</td>
+                        <td class="cross">Нет</td>
+                        <td class="check">MP Rewards (баллы)</td>
+                        <td class="check">Да</td>
+                        <td class="check">Веб + App</td>
+                    </tr>
+                    <tr>
+                        <td><strong>GNC</strong></td>
+                        <td>Ритейл + Приложение</td>
+                        <td class="cross">Нет</td>
+                        <td class="cross">Нет</td>
+                        <td class="check">myGNC PRO ($39.99/год)</td>
+                        <td class="check">Да</td>
+                        <td class="check">Веб + App</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MyFitnessPal</strong></td>
+                        <td>Фитнес-приложение</td>
+                        <td class="partial">Базовый</td>
+                        <td class="cross">Нет</td>
+                        <td class="check">Premium ($19.99/мес)</td>
+                        <td class="cross">Нет</td>
+                        <td class="check">Веб + App</td>
+                    </tr>
+                    <tr>
+                        <td><strong>FatSecret</strong></td>
+                        <td>Калории трекер</td>
+                        <td class="cross">Нет</td>
+                        <td class="cross">Нет</td>
+                        <td class="partial">Premium (опц.)</td>
+                        <td class="cross">Нет</td>
+                        <td class="check">Веб + App</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Freeletics</strong></td>
+                        <td>AI-тренер</td>
+                        <td class="check">AI Coach</td>
+                        <td class="cross">Нет</td>
+                        <td class="check">Подписка</td>
+                        <td class="cross">Нет</td>
+                        <td class="check">Веб + App</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CalorieBot (Telegram)</strong></td>
+                        <td>Telegram-бот</td>
+                        <td class="cross">Нет</td>
+                        <td class="check">Да</td>
+                        <td class="cross">Нет</td>
+                        <td class="cross">Нет</td>
+                        <td class="cross">Только Telegram</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Maxler / SteelPower</strong></td>
+                        <td>Бренды СНГ</td>
+                        <td class="cross">Нет</td>
+                        <td class="cross">Нет</td>
+                        <td class="cross">Нет</td>
+                        <td class="partial">Только сайт</td>
+                        <td class="cross">Нет</td>
+                    </tr>
+                    <tr style="background: rgba(168, 229, 50, 0.04);">
+                        <td><strong style="color: var(--accent-1);">Akasa Club</strong></td>
+                        <td>Бренд + AI + Telegram</td>
+                        <td class="check">AI (фото + текст)</td>
+                        <td class="check">Бот + WebApp</td>
+                        <td class="check">Клуб (членство)</td>
+                        <td class="check">Интеграция</td>
+                        <td class="check">Все платформы</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="callout rv">
+            <strong>Вывод:</strong> Существующие решения либо AI-фитнес без привязки к бренду, либо бренды без AI-экосистемы. Akasa Club объединяет оба подхода — это уникальная позиция на рынке СНГ.
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     02. CONCEPT
+═══════════════════════════════════════ -->
+<section id="concept">
+    <div class="wrap">
+        <div class="rv">
+            <div class="tag">02 — Концепция</div>
+            <h2>Akasa Club —<br>Единое членство</h2>
+            <p class="subtitle">Не просто бот. Клуб, в котором каждый участник получает персонального AI-тренера, доступ к продукции и комьюнити.</p>
+        </div>
+
+        <div class="concept-grid rv">
+            <div class="concept-card">
+                <h3>🤖 AI Фитнес-ассистент</h3>
+                <p>Персональный тренер и нутрициолог в кармане</p>
+                <ul>
+                    <li>Анализ тела по фото</li>
+                    <li>Распознавание еды по фото</li>
+                    <li>Персональные планы питания и тренировок</li>
+                    <li>Проактивные сообщения и мотивация</li>
+                    <li>Трекинг прогресса с графиками</li>
+                </ul>
+            </div>
+            <div class="concept-card">
+                <h3>🏆 Членство в клубе</h3>
+                <p>Единый аккаунт = вход во всю экосистему Akasa</p>
+                <ul>
+                    <li>Бесплатный базовый уровень</li>
+                    <li>Premium — расширенный AI + приоритет</li>
+                    <li>Баллы за активность (тренировки, покупки)</li>
+                    <li>Уровни и достижения</li>
+                    <li>Скидки на продукцию Akasa</li>
+                </ul>
+            </div>
+            <div class="concept-card">
+                <h3>📣 Пуши и активности</h3>
+                <p>Бот держит участников вовлечёнными</p>
+                <ul>
+                    <li>Мероприятия (челленджи, марафоны)</li>
+                    <li>Утренние зарядки (видео/описания)</li>
+                    <li>Розыгрыши для членов клуба</li>
+                    <li>Эксклюзивные скидки и промо</li>
+                    <li>Напоминания (еда, тренировки, добавки)</li>
+                </ul>
+            </div>
+            <div class="concept-card">
+                <h3>🛍️ Интеграция продукции</h3>
+                <p>Органичные рекомендации, не реклама</p>
+                <ul>
+                    <li>Рекомендации продукции в плане питания</li>
+                    <li>Deeplink на сайт/магазин Akasa</li>
+                    <li>Персональный подбор добавок</li>
+                    <li>Отслеживание конверсий</li>
+                    <li>Промокоды для членов клуба</li>
+                </ul>
+            </div>
+            <div class="concept-card">
+                <h3>📱 Telegram WebApp</h3>
+                <p>Полноценное мини-приложение внутри Telegram</p>
+                <ul>
+                    <li>Дашборд прогресса</li>
+                    <li>Календарь тренировок</li>
+                    <li>Расписание мероприятий</li>
+                    <li>Оплата членства (Telegram Payments)</li>
+                    <li>Профиль и настройки</li>
+                </ul>
+            </div>
+            <div class="concept-card">
+                <h3>🔗 Единый аккаунт</h3>
+                <p>Один логин — все платформы Akasa</p>
+                <ul>
+                    <li>Telegram-бот + WebApp</li>
+                    <li>Сайт Akasa</li>
+                    <li>Будущее мобильное приложение</li>
+                    <li>Партнёрские сервисы</li>
+                    <li>OAuth 2.0 / OpenID Connect</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     03. ARCHITECTURE
+═══════════════════════════════════════ -->
+<section id="arch">
+    <div class="wrap">
+        <div class="rv">
+            <div class="tag teal">03 — Архитектура</div>
+            <h2>Архитектура<br>приложения</h2>
+            <p class="subtitle">Монолитный бэкенд на FastAPI, обслуживающий бота, WebApp и будущий веб-сайт через единый API.</p>
+        </div>
+
+        <div class="arch-diagram rv">
+<pre>
+<span class="hl-dim">┌─── Клиенты ───────────────────────────────────────────────────────────────┐</span>
+<span class="hl-dim">│</span>                                                                           <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-green">┌──────────────┐</span>   <span class="hl-teal">┌──────────────┐</span>   <span class="hl-gold">┌──────────────┐</span>   <span class="hl-pink">┌──────────┐</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-green">│ Telegram Bot │</span>   <span class="hl-teal">│ Telegram     │</span>   <span class="hl-gold">│ Веб-сайт    │</span>   <span class="hl-pink">│ Mobile   │</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-green">│ (aiogram 3)  │</span>   <span class="hl-teal">│ WebApp       │</span>   <span class="hl-gold">│ (Next.js)   │</span>   <span class="hl-pink">│ (Фаза 3) │</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-green">│              │</span>   <span class="hl-teal">│ (React SPA)  │</span>   <span class="hl-gold">│             │</span>   <span class="hl-pink">│          │</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-green">└──────┬───────┘</span>   <span class="hl-teal">└──────┬───────┘</span>   <span class="hl-gold">└──────┬───────┘</span>   <span class="hl-pink">└────┬─────┘</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>         <span class="hl-green">│</span>                 <span class="hl-teal">│</span>                 <span class="hl-gold">│</span>              <span class="hl-pink">│</span>        <span class="hl-dim">│</span>
+<span class="hl-dim">└─────────┼─────────────────┼─────────────────┼──────────────┼────────┘</span>
+          <span class="hl-green">│ webhook</span>        <span class="hl-teal">│ HTTPS + JWT</span>    <span class="hl-gold">│ HTTPS + JWT</span>  <span class="hl-pink">│ HTTPS</span>
+          <span class="hl-dim">▼                 ▼                 ▼              ▼</span>
+<span class="hl-dim">┌───────────────────────────────────────────────────────────────────────┐</span>
+<span class="hl-dim">│</span>                    <span class="hl-green">Backend API (FastAPI)</span>                               <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                                                                       <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   ┌─────────┐  ┌──────────┐  ┌───────────┐  ┌──────────┐  ┌───────┐  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   │ <span class="hl-green">Auth</span>    │  │ <span class="hl-teal">Fitness</span>  │  │ <span class="hl-gold">Membership</span>│  │ <span class="hl-pink">Products</span> │  │ <span class="hl-dim">Notif</span> │  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   │ Service │  │ Service  │  │ Service   │  │ Service  │  │Service│  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   └────┬────┘  └────┬─────┘  └─────┬─────┘  └────┬─────┘  └───┬───┘  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>        │            │              │              │            │      <span class="hl-dim">│</span>
+<span class="hl-dim">└────────┼────────────┼──────────────┼──────────────┼────────────┼──────┘</span>
+         <span class="hl-dim">│            │              │              │            │</span>
+         <span class="hl-dim">▼            ▼              ▼              ▼            ▼</span>
+<span class="hl-dim">┌───────────────────────────────────────────────────────────────────────┐</span>
+<span class="hl-dim">│</span>                         <span class="hl-teal">Данные и AI</span>                                    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                                                                       <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   <span class="hl-teal">┌────────────┐</span>  <span class="hl-gold">┌───────┐</span>  <span class="hl-green">┌──────────┐</span>  <span class="hl-pink">┌────────────────┐</span>    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   <span class="hl-teal">│ PostgreSQL │</span>  <span class="hl-gold">│ Redis │</span>  <span class="hl-green">│ S3       │</span>  <span class="hl-pink">│ AI APIs        │</span>    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   <span class="hl-teal">│            │</span>  <span class="hl-gold">│       │</span>  <span class="hl-green">│ Storage  │</span>  <span class="hl-pink">│ fal.ai         │</span>    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   <span class="hl-teal">│ Основная   │</span>  <span class="hl-gold">│ Кэш   │</span>  <span class="hl-green">│          │</span>  <span class="hl-pink">│ OpenRouter     │</span>    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   <span class="hl-teal">│ БД         │</span>  <span class="hl-gold">│ Сессии│</span>  <span class="hl-green">│ Фото     │</span>  <span class="hl-pink">│ FatSecret API  │</span>    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   <span class="hl-teal">│            │</span>  <span class="hl-gold">│ Tasks │</span>  <span class="hl-green">│ Медиа    │</span>  <span class="hl-pink">│                │</span>    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   <span class="hl-teal">└────────────┘</span>  <span class="hl-gold">└───────┘</span>  <span class="hl-green">└──────────┘</span>  <span class="hl-pink">└────────────────┘</span>    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                                                                       <span class="hl-dim">│</span>
+<span class="hl-dim">└───────────────────────────────────────────────────────────────────────┘</span>
+</pre>
+        </div>
+
+        <div class="callout rv">
+            <strong>Telegram-бот = точка входа</strong> — обрабатывает команды, отправляет уведомления, запускает WebApp.
+            <strong>WebApp</strong> — полноценный React SPA внутри Telegram для сложного UI (дашборды, графики, календарь).
+            Оба клиента используют <strong>единый API</strong> с JWT-авторизацией.
+        </div>
+
+        <div class="concept-grid rv" style="margin-top: 32px;">
+            <div class="concept-card">
+                <h3>🔄 Потоки данных</h3>
+                <ul>
+                    <li><strong>Фото тела:</strong> Клиент → API → fal.ai (vision) → анализ → БД</li>
+                    <li><strong>Фото еды:</strong> Клиент → API → fal.ai + FatSecret → БЖУ → БД</li>
+                    <li><strong>Рекомендации:</strong> БД (профиль) → OpenRouter (LLM) → план → клиент</li>
+                    <li><strong>Пуши:</strong> Scheduler (Redis) → Bot API → Telegram пользователю</li>
+                    <li><strong>Продукция:</strong> API каталога Akasa → контекстный матчинг → рекомендация</li>
+                </ul>
+            </div>
+            <div class="concept-card">
+                <h3>📁 Структура проекта</h3>
+<pre style="font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text-2); line-height: 1.8; margin-top: 12px;">
+akasa-club/
+├── bot/            <span style="color: var(--accent-1);"># aiogram 3 handlers</span>
+│   ├── handlers/
+│   ├── keyboards/
+│   └── middlewares/
+├── api/            <span style="color: var(--accent-2);"># FastAPI backend</span>
+│   ├── routes/
+│   ├── services/
+│   └── models/
+├── webapp/         <span style="color: var(--accent-3);"># React Mini App</span>
+│   └── src/
+├── migrations/     <span style="color: var(--text-3);"># Alembic</span>
+├── docker-compose.yml
+└── .env
+</pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     04. DATABASE
+═══════════════════════════════════════ -->
+<section id="db">
+    <div class="wrap">
+        <div class="rv">
+            <div class="tag warm">04 — База данных</div>
+            <h2>Структура<br>базы данных</h2>
+            <p class="subtitle">PostgreSQL. Основные сущности — пользователь, членство, фитнес-данные, продукция, уведомления.</p>
+        </div>
+
+        <div class="schema-grid rv">
+            <div class="schema-table">
+                <div class="schema-table-header">
+                    <span class="icon"></span> users
+                </div>
+                <div class="schema-fields">
+                    <div class="schema-field"><span class="field-name field-pk">id</span><span class="field-type">BIGSERIAL PK</span></div>
+                    <div class="schema-field"><span class="field-name">telegram_id</span><span class="field-type">BIGINT UNIQUE</span></div>
+                    <div class="schema-field"><span class="field-name">email</span><span class="field-type">VARCHAR UNIQUE</span></div>
+                    <div class="schema-field"><span class="field-name">password_hash</span><span class="field-type">VARCHAR</span></div>
+                    <div class="schema-field"><span class="field-name">first_name</span><span class="field-type">VARCHAR</span></div>
+                    <div class="schema-field"><span class="field-name">phone</span><span class="field-type">VARCHAR</span></div>
+                    <div class="schema-field"><span class="field-name">avatar_url</span><span class="field-type">TEXT</span></div>
+                    <div class="schema-field"><span class="field-name">goal</span><span class="field-type">ENUM (lose/gain/maintain)</span></div>
+                    <div class="schema-field"><span class="field-name">timezone</span><span class="field-type">VARCHAR</span></div>
+                    <div class="schema-field"><span class="field-name">created_at</span><span class="field-type">TIMESTAMPTZ</span></div>
+                </div>
+            </div>
+
+            <div class="schema-table">
+                <div class="schema-table-header">
+                    <span class="icon" style="background: var(--accent-3);"></span> memberships
+                </div>
+                <div class="schema-fields">
+                    <div class="schema-field"><span class="field-name field-pk">id</span><span class="field-type">BIGSERIAL PK</span></div>
+                    <div class="schema-field"><span class="field-name field-fk">user_id</span><span class="field-type">FK → users</span></div>
+                    <div class="schema-field"><span class="field-name field-fk">plan_id</span><span class="field-type">FK → membership_plans</span></div>
+                    <div class="schema-field"><span class="field-name">status</span><span class="field-type">ENUM (active/expired/frozen)</span></div>
+                    <div class="schema-field"><span class="field-name">starts_at</span><span class="field-type">DATE</span></div>
+                    <div class="schema-field"><span class="field-name">expires_at</span><span class="field-type">DATE</span></div>
+                    <div class="schema-field"><span class="field-name">auto_renew</span><span class="field-type">BOOLEAN</span></div>
+                    <div class="schema-field"><span class="field-name">points_balance</span><span class="field-type">INT</span></div>
+                </div>
+            </div>
+
+            <div class="schema-table">
+                <div class="schema-table-header">
+                    <span class="icon" style="background: var(--accent-2);"></span> body_measurements
+                </div>
+                <div class="schema-fields">
+                    <div class="schema-field"><span class="field-name field-pk">id</span><span class="field-type">BIGSERIAL PK</span></div>
+                    <div class="schema-field"><span class="field-name field-fk">user_id</span><span class="field-type">FK → users</span></div>
+                    <div class="schema-field"><span class="field-name">measured_at</span><span class="field-type">DATE</span></div>
+                    <div class="schema-field"><span class="field-name">weight_kg</span><span class="field-type">DECIMAL(5,2)</span></div>
+                    <div class="schema-field"><span class="field-name">body_fat_pct</span><span class="field-type">DECIMAL(4,1)</span></div>
+                    <div class="schema-field"><span class="field-name">chest_cm / waist_cm / ...</span><span class="field-type">DECIMAL(5,1)</span></div>
+                    <div class="schema-field"><span class="field-name">photo_url</span><span class="field-type">TEXT</span></div>
+                </div>
+            </div>
+
+            <div class="schema-table">
+                <div class="schema-table-header">
+                    <span class="icon" style="background: var(--accent-4);"></span> meal_logs
+                </div>
+                <div class="schema-fields">
+                    <div class="schema-field"><span class="field-name field-pk">id</span><span class="field-type">BIGSERIAL PK</span></div>
+                    <div class="schema-field"><span class="field-name field-fk">user_id</span><span class="field-type">FK → users</span></div>
+                    <div class="schema-field"><span class="field-name">logged_at</span><span class="field-type">TIMESTAMPTZ</span></div>
+                    <div class="schema-field"><span class="field-name">meal_type</span><span class="field-type">ENUM (breakfast/lunch/...)</span></div>
+                    <div class="schema-field"><span class="field-name">photo_url</span><span class="field-type">TEXT</span></div>
+                    <div class="schema-field"><span class="field-name">calories</span><span class="field-type">INT</span></div>
+                    <div class="schema-field"><span class="field-name">protein_g / fat_g / carbs_g</span><span class="field-type">DECIMAL</span></div>
+                    <div class="schema-field"><span class="field-name">items</span><span class="field-type">JSONB</span></div>
+                </div>
+            </div>
+
+            <div class="schema-table">
+                <div class="schema-table-header">
+                    <span class="icon" style="background: var(--accent-1);"></span> workouts
+                </div>
+                <div class="schema-fields">
+                    <div class="schema-field"><span class="field-name field-pk">id</span><span class="field-type">BIGSERIAL PK</span></div>
+                    <div class="schema-field"><span class="field-name field-fk">user_id</span><span class="field-type">FK → users</span></div>
+                    <div class="schema-field"><span class="field-name field-fk">template_id</span><span class="field-type">FK → workout_templates</span></div>
+                    <div class="schema-field"><span class="field-name">started_at</span><span class="field-type">TIMESTAMPTZ</span></div>
+                    <div class="schema-field"><span class="field-name">duration_sec</span><span class="field-type">INT</span></div>
+                    <div class="schema-field"><span class="field-name">rating</span><span class="field-type">SMALLINT (1-5)</span></div>
+                    <div class="schema-field"><span class="field-name">notes</span><span class="field-type">TEXT</span></div>
+                </div>
+            </div>
+
+            <div class="schema-table">
+                <div class="schema-table-header">
+                    <span class="icon" style="background: var(--accent-3);"></span> product_recommendations
+                </div>
+                <div class="schema-fields">
+                    <div class="schema-field"><span class="field-name field-pk">id</span><span class="field-type">BIGSERIAL PK</span></div>
+                    <div class="schema-field"><span class="field-name field-fk">user_id</span><span class="field-type">FK → users</span></div>
+                    <div class="schema-field"><span class="field-name">product_id</span><span class="field-type">VARCHAR</span></div>
+                    <div class="schema-field"><span class="field-name">context</span><span class="field-type">VARCHAR (meal_plan/post_workout)</span></div>
+                    <div class="schema-field"><span class="field-name">shown_at</span><span class="field-type">TIMESTAMPTZ</span></div>
+                    <div class="schema-field"><span class="field-name">clicked</span><span class="field-type">BOOLEAN</span></div>
+                    <div class="schema-field"><span class="field-name">purchased</span><span class="field-type">BOOLEAN</span></div>
+                </div>
+            </div>
+
+            <div class="schema-table">
+                <div class="schema-table-header">
+                    <span class="icon" style="background: var(--accent-2);"></span> club_events
+                </div>
+                <div class="schema-fields">
+                    <div class="schema-field"><span class="field-name field-pk">id</span><span class="field-type">SERIAL PK</span></div>
+                    <div class="schema-field"><span class="field-name">type</span><span class="field-type">ENUM (challenge/workout/promo/giveaway)</span></div>
+                    <div class="schema-field"><span class="field-name">title</span><span class="field-type">VARCHAR</span></div>
+                    <div class="schema-field"><span class="field-name">description</span><span class="field-type">TEXT</span></div>
+                    <div class="schema-field"><span class="field-name">starts_at / ends_at</span><span class="field-type">TIMESTAMPTZ</span></div>
+                    <div class="schema-field"><span class="field-name">image_url</span><span class="field-type">TEXT</span></div>
+                    <div class="schema-field"><span class="field-name">members_only</span><span class="field-type">BOOLEAN</span></div>
+                </div>
+            </div>
+
+            <div class="schema-table">
+                <div class="schema-table-header">
+                    <span class="icon" style="background: var(--accent-4);"></span> referrals
+                </div>
+                <div class="schema-fields">
+                    <div class="schema-field"><span class="field-name field-pk">id</span><span class="field-type">BIGSERIAL PK</span></div>
+                    <div class="schema-field"><span class="field-name field-fk">referrer_id</span><span class="field-type">FK → users</span></div>
+                    <div class="schema-field"><span class="field-name field-fk">referred_id</span><span class="field-type">FK → users</span></div>
+                    <div class="schema-field"><span class="field-name">code</span><span class="field-type">VARCHAR UNIQUE</span></div>
+                    <div class="schema-field"><span class="field-name">bonus_given</span><span class="field-type">BOOLEAN</span></div>
+                    <div class="schema-field"><span class="field-name">created_at</span><span class="field-type">TIMESTAMPTZ</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout rv" style="margin-top: 32px;">
+            <strong>Дополнительные таблицы:</strong> notifications (очередь уведомлений), workout_sets (подходы), workout_templates (шаблоны тренировок), membership_plans (тарифы), payments (платежи), auth_tokens (SSO провайдеры).
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     05. SSO
+═══════════════════════════════════════ -->
+<section id="sso">
+    <div class="wrap">
+        <div class="rv">
+            <div class="tag teal">05 — Единый аккаунт</div>
+            <h2>SSO: один логин —<br>все платформы</h2>
+            <p class="subtitle">Telegram initData как основная авторизация. JWT токены для всех клиентов. Привязка email для веб-доступа.</p>
+        </div>
+
+        <div class="arch-diagram rv">
+<pre>
+<span class="hl-green">Telegram Mini App</span>               <span class="hl-gold">Веб-сайт Akasa</span>              <span class="hl-pink">Mobile App</span>
+       <span class="hl-dim">│</span>                              <span class="hl-dim">│</span>                          <span class="hl-dim">│</span>
+       <span class="hl-dim">│</span> <span class="hl-green">initData</span>                     <span class="hl-dim">│</span> <span class="hl-gold">email + password</span>         <span class="hl-dim">│</span> <span class="hl-pink">OAuth / biometric</span>
+       <span class="hl-dim">│</span> <span class="hl-dim">(подпись бота)</span>                <span class="hl-dim">│</span> <span class="hl-dim">(или OAuth)</span>               <span class="hl-dim">│</span>
+       <span class="hl-dim">▼</span>                              <span class="hl-dim">▼</span>                          <span class="hl-dim">▼</span>
+<span class="hl-dim">┌──────────────────────────────────────────────────────────────────────┐</span>
+<span class="hl-dim">│</span>                     <span class="hl-teal">Auth Service (FastAPI)</span>                          <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                                                                      <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   1. Валидация initData / email+pass / OAuth                         <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   2. Найти или создать пользователя                                 <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>   3. Выдать <span class="hl-green">JWT access_token</span> (единый формат для всех клиентов)         <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                                                                      <span class="hl-dim">│</span>
+<span class="hl-dim">└──────────────────────────────────────────────────────────────────────┘</span>
+       <span class="hl-dim">│</span>
+       <span class="hl-dim">▼</span>
+<span class="hl-dim">┌──────────────────┐</span>
+<span class="hl-dim">│</span>  <span class="hl-teal">users</span> таблица    <span class="hl-dim">│</span>    Один пользователь = telegram_id + email + phone
+<span class="hl-dim">│</span>  <span class="hl-teal">auth_tokens</span>      <span class="hl-dim">│</span>    Множество провайдеров привязаны к одному user_id
+<span class="hl-dim">└──────────────────┘</span>
+</pre>
+        </div>
+
+        <div class="callout rv">
+            <strong>Привязка аккаунтов:</strong> Пользователь приходит через Telegram → автоматически создаётся аккаунт. Потом может привязать email для входа на сайт. Или наоборот — зарегистрировался на сайте, потом привязал Telegram. Один профиль, полная история.
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     06. AI STACK
+═══════════════════════════════════════ -->
+<section id="ai">
+    <div class="wrap">
+        <div class="rv">
+            <div class="tag red">06 — AI-стек</div>
+            <h2>AI и внешние<br>API</h2>
+            <p class="subtitle">Комбинация сервисов для анализа фото, распознавания еды и генерации рекомендаций.</p>
+        </div>
+
+        <div class="comp-table-wrap rv">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Сервис</th>
+                        <th>Задача</th>
+                        <th>Стоимость</th>
+                        <th>Альтернатива</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>fal.ai</strong></td>
+                        <td>Анализ фото тела, распознавание еды (computer vision)</td>
+                        <td>~$0.001-0.01 / запрос</td>
+                        <td>Clarifai, Foodvisor</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OpenRouter</strong></td>
+                        <td>LLM — генерация планов питания, тренировок, мотивация</td>
+                        <td>~$0.001-0.03 / запрос (зависит от модели)</td>
+                        <td>OpenAI API, Claude API</td>
+                    </tr>
+                    <tr>
+                        <td><strong>FatSecret API</strong></td>
+                        <td>База продуктов, калории, БЖУ (текстовый поиск)</td>
+                        <td>Бесплатно (до 10K запросов/день)</td>
+                        <td>Nutritionix ($299/мес)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Telegram Bot API</strong></td>
+                        <td>Бот, уведомления, WebApp, платежи</td>
+                        <td>Бесплатно</td>
+                        <td>—</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="price-box rv" style="margin-top: 32px;">
+            <div style="font-family: 'Unbounded', sans-serif; font-size: 0.8rem; color: var(--text-3); margin-bottom: 8px;">ЕЖЕМЕСЯЧНЫЕ РАСХОДЫ НА AI API</div>
+            <div class="price-value">15 — 40K ₽</div>
+            <div class="price-label">в месяц при 500-2000 активных пользователей</div>
+            <div class="price-note">Масштабируется линейно. При 10K пользователей — ~80-150K ₽/мес. FatSecret бесплатен до 10K запросов/день.</div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     07. ROADMAP
+═══════════════════════════════════════ -->
+<section id="roadmap">
+    <div class="wrap">
+        <div class="rv">
+            <div class="tag">07 — Роадмап</div>
+            <h2>Дорожная карта<br>разработки</h2>
+            <p class="subtitle">5 фаз: от Telegram-бота до полноценной клубной платформы</p>
+        </div>
+
+        <div class="roadmap-vertical rv">
+            <!-- Phase 1 -->
+            <div class="rm-phase">
+                <div class="rm-dot"></div>
+                <div class="rm-card">
+                    <div class="rm-time">Фаза 1 — Месяцы 1-3</div>
+                    <h3>Telegram-бот + Базовый AI</h3>
+                    <ul class="rm-features">
+                        <li>Регистрация + SSO (Telegram)</li>
+                        <li>Онбординг (цели, параметры)</li>
+                        <li>Загрузка фото тела</li>
+                        <li>AI-анализ (fal.ai)</li>
+                        <li>Генерация плана питания (OpenRouter)</li>
+                        <li>Генерация плана тренировок</li>
+                        <li>Распознавание еды по фото</li>
+                        <li>Каталог продукции Akasa</li>
+                        <li>Проактивные сообщения</li>
+                        <li>Базовый трекинг веса</li>
+                    </ul>
+                    <div class="rm-deliverable">
+                        <strong>Результат:</strong> Рабочий Telegram-бот, готовый к запуску с первыми пользователями (бета)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="rm-phase">
+                <div class="rm-dot"></div>
+                <div class="rm-card">
+                    <div class="rm-time">Фаза 2 — Месяцы 3-5</div>
+                    <h3>Telegram WebApp + Клуб</h3>
+                    <ul class="rm-features">
+                        <li>Telegram Mini App (React)</li>
+                        <li>Дашборд прогресса</li>
+                        <li>Графики (вес, замеры, БЖУ)</li>
+                        <li>Фото до/после</li>
+                        <li>Членство в Akasa Club (уровни)</li>
+                        <li>Telegram Payments (подписки)</li>
+                        <li>Баллы за активность</li>
+                        <li>Реферальная система</li>
+                    </ul>
+                    <div class="rm-deliverable">
+                        <strong>Результат:</strong> Полноценный Mini App внутри Telegram + клубная система с уровнями
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="rm-phase">
+                <div class="rm-dot"></div>
+                <div class="rm-card">
+                    <div class="rm-time">Фаза 3 — Месяцы 5-7</div>
+                    <h3>Пуши, мероприятия, активности</h3>
+                    <ul class="rm-features">
+                        <li>Мероприятия и челленджи</li>
+                        <li>Утренние зарядки (контент)</li>
+                        <li>Розыгрыши для членов клуба</li>
+                        <li>Эксклюзивные скидки и промокоды</li>
+                        <li>Расписание мероприятий в WebApp</li>
+                        <li>Уведомления о новых продуктах</li>
+                        <li>Геймификация (достижения, бейджи)</li>
+                    </ul>
+                    <div class="rm-deliverable">
+                        <strong>Результат:</strong> Живое комьюнити с активностями, челленджами и вовлечением
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 4 -->
+            <div class="rm-phase">
+                <div class="rm-dot"></div>
+                <div class="rm-card">
+                    <div class="rm-time">Фаза 4 — Месяцы 7-9</div>
+                    <h3>Веб-версия + Админка</h3>
+                    <ul class="rm-features">
+                        <li>Веб-сайт (Next.js) с полным функционалом</li>
+                        <li>Привязка email к аккаунту</li>
+                        <li>Админ-панель для команды Akasa</li>
+                        <li>Аналитика конверсий (рекомендации → покупки)</li>
+                        <li>Управление мероприятиями</li>
+                        <li>CRM-данные о пользователях</li>
+                        <li>Управление каталогом продукции</li>
+                    </ul>
+                    <div class="rm-deliverable">
+                        <strong>Результат:</strong> Полноценная веб-платформа + инструменты управления для Akasa
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 5 -->
+            <div class="rm-phase">
+                <div class="rm-dot"></div>
+                <div class="rm-card">
+                    <div class="rm-time">Фаза 5 — Месяцы 10-13</div>
+                    <h3>Нативное приложение</h3>
+                    <ul class="rm-features">
+                        <li>iOS + Android (React Native)</li>
+                        <li>Push-уведомления</li>
+                        <li>Apple Health / Google Fit</li>
+                        <li>Офлайн-режим</li>
+                        <li>Камера для фото еды (нативная)</li>
+                        <li>Виджеты на главный экран</li>
+                        <li>Биометрическая авторизация</li>
+                    </ul>
+                    <div class="rm-deliverable">
+                        <strong>Результат:</strong> Полная экосистема: Telegram + Web + Mobile. Единый аккаунт. Akasa Club.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     08. PRICE
+═══════════════════════════════════════ -->
+<section id="price">
+    <div class="wrap">
+        <div class="rv">
+            <div class="tag warm">08 — Стоимость</div>
+            <h2>Стоимость<br>и сроки</h2>
+            <p class="subtitle">Рекомендуемая цена для Фазы 1 (Telegram-бот MVP) при разработке в Северной Осетии.</p>
+        </div>
+
+        <div class="price-box rv">
+            <div style="font-family: 'Unbounded', sans-serif; font-size: 0.8rem; color: var(--text-3); margin-bottom: 8px;">ФАЗА 1 — TELEGRAM MVP</div>
+            <div class="price-value">700 — 800K ₽</div>
+            <div class="price-label">рекомендуемая цена для заказчика</div>
+            <div class="price-note">Срок: 2-3 месяца. Включает бота, AI-интеграции, базовый WebApp, SSO, каталог Akasa. Ежемесячные расходы на серверы и AI API (~15-40K ₽) — отдельно, за счёт заказчика.</div>
+        </div>
+
+        <div class="comp-table-wrap rv" style="margin-top: 32px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Фаза</th>
+                        <th>Что включено</th>
+                        <th>Срок</th>
+                        <th>Ориентир цены</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: rgba(168, 229, 50, 0.04);">
+                        <td><strong style="color: var(--accent-1);">1. Telegram MVP</strong></td>
+                        <td>Бот + AI + WebApp + SSO + каталог</td>
+                        <td>2-3 мес</td>
+                        <td><strong>700-800K ₽</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. WebApp + Клуб</strong></td>
+                        <td>Mini App + членство + баллы + рефералы</td>
+                        <td>2 мес</td>
+                        <td>400-600K ₽</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Активности</strong></td>
+                        <td>Мероприятия, челленджи, розыгрыши, геймификация</td>
+                        <td>2 мес</td>
+                        <td>300-500K ₽</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. Веб + Админка</strong></td>
+                        <td>Сайт, аналитика, CRM, управление</td>
+                        <td>2-3 мес</td>
+                        <td>500-800K ₽</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5. Mobile App</strong></td>
+                        <td>iOS + Android, push, Health, офлайн</td>
+                        <td>3-4 мес</td>
+                        <td>800K-1.2M ₽</td>
+                    </tr>
+                    <tr style="border-top: 2px solid var(--border);">
+                        <td><strong>Всего</strong></td>
+                        <td>Полная экосистема Akasa Club</td>
+                        <td><strong>11-15 мес</strong></td>
+                        <td><strong>2.7 — 3.9M ₽</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="callout rv" style="margin-top: 32px;">
+            <strong>Рекомендация по ценообразованию:</strong> Начните с Фазы 1 за 700-800K ₽. Это ниже московских студий в 2-3 раза, при этом адекватная цена для регионального заказчика-бренда. Каждая следующая фаза оплачивается отдельно по результатам предыдущей. Ежемесячная поддержка после запуска — 30-50K ₽/мес.
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="wrap">
+        <p style="font-family: 'Unbounded', sans-serif; font-weight: 700; color: var(--text-2); margin-bottom: 8px; font-size: 0.85rem;">Akasa Club — Technical Documentation</p>
+        <p>Конфиденциальный документ. Март 2026. v1.0</p>
+    </div>
+</footer>
+
+<!-- Scroll Reveal -->
+<script>
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>

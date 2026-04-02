@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akasa Club — Цифровая экосистема бренда</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;500;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-card-hover: #1a1a26;
+            --accent-lime: #c8ff2e;
+            --accent-lime-dim: rgba(200, 255, 46, 0.15);
+            --accent-orange: #ff6b2e;
+            --accent-teal: #2effb2;
+            --accent-pink: #ff2e5b;
+            --accent-gradient: linear-gradient(135deg, #c8ff2e 0%, #7bff2e 50%, #2effb2 100%);
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --border: rgba(255, 255, 255, 0.06);
+            --radius: 20px;
+            --radius-sm: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 60px); }
+
+        section { padding: clamp(60px, 10vw, 120px) 0; position: relative; }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            border: 1px solid rgba(200, 255, 46, 0.25);
+            background: rgba(200, 255, 46, 0.06);
+            color: var(--accent-lime);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .tag::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent-lime);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        .tag.orange { border-color: rgba(255,107,46,0.25); background: rgba(255,107,46,0.06); color: var(--accent-orange); }
+        .tag.orange::before { background: var(--accent-orange); }
+        .tag.teal { border-color: rgba(46,255,178,0.25); background: rgba(46,255,178,0.06); color: var(--accent-teal); }
+        .tag.teal::before { background: var(--accent-teal); }
+        .tag.pink { border-color: rgba(255,46,91,0.25); background: rgba(255,46,91,0.06); color: var(--accent-pink); }
+        .tag.pink::before { background: var(--accent-pink); }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        .section-title {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            color: var(--text-secondary);
+            max-width: 620px;
+            margin-bottom: 48px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ═══════════════════════════════════
+           NAV
+        ═══════════════════════════════════ */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 14px 0;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+
+        .nav-logo {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .nav-logo span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links { display: flex; gap: 28px; list-style: none; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            transition: color 0.25s;
+        }
+        .nav-links a:hover { color: var(--accent-lime); }
+
+        @media (max-width: 700px) { .nav-links { display: none; } }
+
+        /* ═══════════════════════════════════
+           HERO
+        ═══════════════════════════════════ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 900px; height: 900px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(200,255,46,0.07) 0%, transparent 70%);
+            top: -250px; right: -250px;
+            pointer-events: none;
+            animation: hero-glow 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes hero-glow {
+            0% { transform: translate(0,0) scale(1); opacity: 0.6; }
+            100% { transform: translate(-80px,60px) scale(1.2); opacity: 1; }
+        }
+
+        .hero-content { position: relative; z-index: 2; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 100px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .hero-badge span { color: var(--accent-lime); font-weight: 600; }
+
+        .hero h1 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(2.2rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 28px;
+            animation: fadeInUp 0.8s ease-out 0.15s both;
+        }
+
+        .hero h1 .accent {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: clamp(1.05rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 580px;
+            line-height: 1.7;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: clamp(30px, 5vw, 60px);
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .hero-stat { position: relative; padding-left: 20px; }
+        .hero-stat::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 2px;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+        }
+
+        .hero-stat-value {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            font-weight: 700;
+            color: var(--accent-lime);
+        }
+        .hero-stat-label { font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* ═══════════════════════════════════
+           PROBLEM
+        ═══════════════════════════════════ */
+        .problem { background: linear-gradient(180deg, var(--bg-deep) 0%, #0d0d15 100%); }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-orange), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .problem-card:hover::before { opacity: 1; }
+        .problem-card:hover { background: var(--bg-card-hover); border-color: rgba(255,107,46,0.15); transform: translateY(-4px); }
+
+        .problem-icon {
+            width: 48px; height: 48px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,107,46,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+        }
+
+        .problem-card h3 { font-family: 'Unbounded', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 10px; }
+        .problem-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+
+        .problem-bigstat {
+            text-align: center;
+            margin-top: 60px;
+            padding: 48px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(255,107,46,0.06) 0%, rgba(255,46,46,0.04) 100%);
+            border: 1px solid rgba(255,107,46,0.1);
+        }
+        .problem-bigstat-number {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b2e, #ff2e5b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+        .problem-bigstat-text { font-size: 1.1rem; color: var(--text-secondary); margin-top: 12px; }
+
+        /* ═══════════════════════════════════
+           VISION
+        ═══════════════════════════════════ */
+        .vision-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 900px) { .vision-cards { grid-template-columns: 1fr; } }
+
+        .vision-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        .vision-card:hover { transform: translateY(-4px); }
+
+        .vision-card.lime:hover { border-color: rgba(200,255,46,0.2); }
+        .vision-card.teal:hover { border-color: rgba(46,255,178,0.2); }
+        .vision-card.orange:hover { border-color: rgba(255,107,46,0.2); }
+
+        .vision-icon {
+            width: 56px; height: 56px;
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 24px;
+        }
+        .vision-icon.lime { background: rgba(200,255,46,0.1); }
+        .vision-icon.teal { background: rgba(46,255,178,0.1); }
+        .vision-icon.orange { background: rgba(255,107,46,0.1); }
+
+        .vision-card h3 { font-family: 'Unbounded', sans-serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; }
+        .vision-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.65; }
+
+        /* ═══════════════════════════════════
+           STAGES / ROADMAP
+        ═══════════════════════════════════ */
+        .stage-block {
+            margin-bottom: 48px;
+            position: relative;
+        }
+
+        .stage-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stage-num {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+            opacity: 0.25;
+        }
+        .stage-num.lime { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; opacity: 0.5; }
+        .stage-num.teal { color: var(--accent-teal); }
+        .stage-num.orange { color: var(--accent-orange); }
+
+        .stage-title-group h3 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .stage-title-group .stage-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .stage-title-group .stage-meta span {
+            color: var(--accent-lime);
+            font-weight: 600;
+        }
+
+        .stage-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: clamp(24px, 4vw, 40px);
+            transition: all 0.4s ease;
+        }
+        .stage-content:hover { border-color: rgba(200,255,46,0.12); }
+
+        .stage-desc {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.7;
+            max-width: 700px;
+        }
+
+        .feature-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .pill {
+            padding: 8px 18px;
+            border-radius: 100px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .pill:hover { background: rgba(200,255,46,0.06); border-color: rgba(200,255,46,0.2); color: var(--accent-lime); }
+
+        .pill.highlight {
+            background: rgba(200,255,46,0.08);
+            border-color: rgba(200,255,46,0.2);
+            color: var(--accent-lime);
+        }
+
+        .stage-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .detail-item {
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .detail-item h4 {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-lime);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+        .detail-item p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; }
+
+        .detail-item.teal h4 { color: var(--accent-teal); }
+        .detail-item.orange h4 { color: var(--accent-orange); }
+
+        /* ═══════════════════════════════════
+           AI SECTION
+        ═══════════════════════════════════ */
+        .ai-section { background: linear-gradient(180deg, #0d0d15 0%, var(--bg-deep) 100%); }
+
+        .ai-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 800px) { .ai-grid { grid-template-columns: 1fr; } }
+
+        .ai-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .ai-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius);
+            background: radial-gradient(circle at 50% 0%, rgba(200,255,46,0.05) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .ai-card:hover::after { opacity: 1; }
+        .ai-card:hover { border-color: rgba(200,255,46,0.15); transform: translateY(-4px); }
+
+        .ai-card.featured {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(200,255,46,0.04), rgba(46,255,178,0.02));
+            border-color: rgba(200,255,46,0.1);
+        }
+        @media (max-width: 800px) { .ai-card.featured { grid-column: span 1; } }
+
+        .ai-icon {
+            width: 52px; height: 52px;
+            border-radius: var(--radius-sm);
+            background: var(--accent-lime-dim);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            position: relative; z-index: 1;
+        }
+
+        .ai-card h3 { font-family: 'Unbounded', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 10px; position: relative; z-index: 1; }
+        .ai-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; position: relative; z-index: 1; }
+
+        /* ═══════════════════════════════════
+           BENEFITS
+        ═══════════════════════════════════ */
+        .benefits { background: linear-gradient(180deg, var(--bg-deep) 0%, #0d0d15 100%); }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .benefit-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 28px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.35s ease;
+        }
+        .benefit-card:hover { border-color: rgba(200,255,46,0.15); transform: translateY(-3px); }
+
+        .benefit-marker {
+            flex-shrink: 0;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--accent-lime-dim);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .benefit-card h3 { font-family: 'Unbounded', sans-serif; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; }
+        .benefit-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+
+        /* ═══════════════════════════════════
+           PRICING
+        ═══════════════════════════════════ */
+        .pricing-section { text-align: center; }
+
+        .pricing-total {
+            margin-bottom: 48px;
+            padding: 48px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(200,255,46,0.06) 0%, rgba(46,255,178,0.03) 100%);
+            border: 1px solid rgba(200,255,46,0.12);
+        }
+
+        .pricing-amount {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(2.8rem, 7vw, 4.5rem);
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .pricing-label { font-size: 1rem; color: var(--text-secondary); margin-bottom: 24px; }
+
+        .pricing-split {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .split-item {
+            padding: 16px 28px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            min-width: 180px;
+        }
+        .split-item-phase {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+        .split-item-phase.c1 { color: var(--accent-lime); }
+        .split-item-phase.c2 { color: var(--accent-teal); }
+        .split-item-phase.c3 { color: var(--accent-orange); }
+
+        .split-item-amount {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .pricing-support {
+            margin-top: 32px;
+            padding: 24px 36px;
+            border-radius: var(--radius);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .pricing-support-icon {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: rgba(46,255,178,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .pricing-support-text { text-align: left; }
+        .pricing-support-text strong { color: var(--accent-teal); font-family: 'Unbounded', sans-serif; font-size: 1.1rem; }
+        .pricing-support-text p { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
+
+        /* ═══════════════════════════════════
+           TIMELINE
+        ═══════════════════════════════════ */
+        .timeline-bar {
+            display: flex;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 16px;
+            height: 56px;
+            border: 1px solid var(--border);
+        }
+        .tl-seg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--bg-deep);
+            position: relative;
+        }
+        .tl-seg.s1 { flex: 3; background: linear-gradient(135deg, #c8ff2e, #7bff2e); }
+        .tl-seg.s2 { flex: 3; background: linear-gradient(135deg, #2effb2, #2ec4ff); }
+        .tl-seg.s3 { flex: 2; background: linear-gradient(135deg, #ff6b2e, #ffa02e); }
+
+        .tl-labels {
+            display: flex;
+            margin-bottom: 48px;
+        }
+        .tl-label { font-size: 0.78rem; color: var(--text-muted); text-align: center; }
+        .tl-label.l1 { flex: 3; }
+        .tl-label.l2 { flex: 3; }
+        .tl-label.l3 { flex: 2; }
+
+        /* ═══════════════════════════════════
+           FUTURE ROADMAP
+        ═══════════════════════════════════ */
+        .future-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .future-card {
+            padding: 28px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.35s ease;
+        }
+        .future-card:hover { border-color: rgba(200,255,46,0.12); transform: translateY(-3px); }
+
+        .future-card .fc-label {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .future-card h4 { font-family: 'Unbounded', sans-serif; font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; }
+        .future-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+
+        /* ═══════════════════════════════════
+           CHAT DEMO
+        ═══════════════════════════════════ */
+        .demo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+        @media (max-width: 900px) { .demo-wrapper { flex-direction: column; } }
+
+        .demo-text { flex: 1; }
+
+        .demo-chat {
+            flex: 1;
+            max-width: 420px;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 700; color: #0a0a0f;
+        }
+        .chat-name { font-weight: 700; font-size: 0.95rem; }
+        .chat-status { font-size: 0.75rem; color: var(--accent-lime); }
+
+        .chat-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-height: 340px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 0.86rem;
+            line-height: 1.5;
+            animation: msgAppear 0.5s ease-out both;
+        }
+        .msg-bot {
+            background: rgba(200,255,46,0.08);
+            border: 1px solid rgba(200,255,46,0.12);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .msg-user {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .msg:nth-child(1) { animation-delay: 0.2s; }
+        .msg:nth-child(2) { animation-delay: 0.7s; }
+        .msg:nth-child(3) { animation-delay: 1.2s; }
+        .msg:nth-child(4) { animation-delay: 1.7s; }
+        .msg:nth-child(5) { animation-delay: 2.2s; }
+        .msg:nth-child(6) { animation-delay: 2.7s; }
+
+        @keyframes msgAppear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ═══════════════════════════════════
+           CTA
+        ═══════════════════════════════════ */
+        .cta-section {
+            text-align: center;
+            padding: clamp(80px, 12vw, 160px) 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(200,255,46,0.06) 0%, transparent 70%);
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .cta-title {
+            font-family: 'Unbounded', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .cta-desc { font-size: 1.05rem; color: var(--text-secondary); max-width: 540px; margin: 0 auto 40px; position: relative; }
+
+        .cta-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 44px;
+            border-radius: 100px;
+            background: var(--accent-lime);
+            color: #0a0a0f;
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            border: none;
+            position: relative;
+        }
+        .cta-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(200,255,46,0.35); }
+
+        /* ═══════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════ */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        footer .footer-brand {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        footer p { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* ═══════════════════════════════════
+           GUARANTEE
+        ═══════════════════════════════════ */
+        .guarantee-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        @media (max-width: 800px) { .guarantee-grid { grid-template-columns: 1fr; } }
+
+        .guarantee-item {
+            padding: 32px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            transition: all 0.35s ease;
+        }
+        .guarantee-item:hover { border-color: rgba(200,255,46,0.12); transform: translateY(-3px); }
+
+        .guarantee-icon {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: var(--accent-lime-dim);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 16px;
+        }
+        .guarantee-item h4 { font-family: 'Unbounded', sans-serif; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; }
+        .guarantee-item p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+    </style>
+</head>
+<body>
+
+<!-- ════════ NAV ════════ -->
+<nav>
+    <div class="container nav-inner">
+        <div class="nav-logo"><span>Akasa</span> Club</div>
+        <ul class="nav-links">
+            <li><a href="#vision">Видение</a></li>
+            <li><a href="#stages">Этапы</a></li>
+            <li><a href="#ai">AI</a></li>
+            <li><a href="#pricing">Стоимость</a></li>
+            <li><a href="#roadmap">Роадмап</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- ════════ HERO ════════ -->
+<section class="hero">
+    <div class="container hero-content">
+        <div class="hero-badge">Коммерческое предложение &mdash; <span>Akasa Club</span></div>
+        <h1>Цифровая<br><span class="accent">экосистема</span><br>вашего бренда</h1>
+        <p class="hero-desc">Telegram-бот с AI-ассистентом, веб-платформа и полноценный сайт &mdash; единая система, которая превращает разовых покупателей в лояльное комьюнити Akasa.</p>
+
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-value">3 этапа</div>
+                <div class="hero-stat-label">Поэтапная разработка</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">2 мес.</div>
+                <div class="hero-stat-label">Срок разработки</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">24/7</div>
+                <div class="hero-stat-label">AI-ассистент на связи</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ PROBLEM ════════ -->
+<section class="problem">
+    <div class="container">
+        <div class="tag orange">Проблема рынка</div>
+        <h2 class="section-title">Почему бренды теряют клиентов</h2>
+        <p class="section-subtitle">Продукт покупают один раз. Потом забывают. Уходят к конкуренту. Не потому что продукт плохой &mdash; а потому что нет связи с брендом после покупки.</p>
+
+        <div class="problem-grid">
+            <div class="problem-card">
+                <div class="problem-icon">🛒</div>
+                <h3>Одноразовая покупка</h3>
+                <p>Клиент купил спортпит, но не получил сопровождения. Не увидел результат. Решил, что продукт не работает. Больше не вернётся.</p>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon">📢</div>
+                <h3>Соцсети не удерживают</h3>
+                <p>Посты в Instagram теряются в ленте через час. Сторис забываются. Нет инструмента, который держит клиента в экосистеме бренда постоянно.</p>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon">🤷</div>
+                <h3>Нет персонализации</h3>
+                <p>Все клиенты получают одинаковый контент. Новичок и опытный атлет видят одни и те же рекомендации. Никто не чувствует индивидуального подхода.</p>
+            </div>
+            <div class="problem-card">
+                <div class="problem-icon">📊</div>
+                <h3>Нет данных о клиентах</h3>
+                <p>Бренд не знает, кто его покупатели, какие у них цели, что они едят и как тренируются. Маркетинг работает вслепую.</p>
+            </div>
+        </div>
+
+        <div class="problem-bigstat">
+            <div class="problem-bigstat-number">78%</div>
+            <div class="problem-bigstat-text">покупателей спортпитания бросают тренировки в первые 3 месяца<br>и перестают покупать. Akasa Club решает эту проблему.</div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ VISION ════════ -->
+<section id="vision">
+    <div class="container">
+        <div class="tag">Решение</div>
+        <h2 class="section-title">Akasa Club &mdash; три продукта, одна экосистема</h2>
+        <p class="section-subtitle">Пользователь создаёт один аккаунт &mdash; и получает доступ ко всей экосистеме Akasa: бот, веб-приложение, сайт. Бесшовный опыт, полная картина клиента.</p>
+
+        <div class="vision-cards">
+            <div class="vision-card lime">
+                <div class="vision-icon lime">🤖</div>
+                <h3>Telegram-бот с AI</h3>
+                <p>Персональный AI-ассистент, который консультирует по спортпиту, составляет планы питания и тренировок, считает калории и помнит каждого пользователя.</p>
+            </div>
+            <div class="vision-card teal">
+                <div class="vision-icon teal">🌐</div>
+                <h3>Web-приложение</h3>
+                <p>Красивый интерфейс с личным кабинетом, анонсами мероприятий, акциями, новыми продуктами линейки Akasa. Push-уведомления для моментальной коммуникации.</p>
+            </div>
+            <div class="vision-card orange">
+                <div class="vision-icon orange">🏠</div>
+                <h3>Полноценный сайт</h3>
+                <p>Витрина бренда с авторизацией через Telegram-бот или QR-код. Единая точка входа в мир Akasa для новых и существующих клиентов.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ DEMO CHAT ════════ -->
+<section>
+    <div class="container">
+        <div class="demo-wrapper">
+            <div class="demo-text">
+                <div class="tag">Как это работает</div>
+                <h2 class="section-title">AI, который знает ваш продукт</h2>
+                <p class="section-subtitle" style="margin-bottom:24px;">На первом этапе мы обучаем AI на материалах Akasa: линейка продуктов, составы, рекомендации по приёму, совместимость добавок. Бот становится экспертом бренда.</p>
+                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7;">Пользователь общается с ботом как с живым консультантом. AI помнит историю, адаптирует рекомендации и органично предлагает продукцию Akasa &mdash; не как рекламу, а как часть персональной программы.</p>
+            </div>
+            <div class="demo-chat">
+                <div class="chat-header">
+                    <div class="chat-avatar">A</div>
+                    <div>
+                        <div class="chat-name">Akasa AI</div>
+                        <div class="chat-status">● онлайн</div>
+                    </div>
+                </div>
+                <div class="chat-body">
+                    <div class="msg msg-user">Привет! Хочу набрать массу, но не понимаю какой протеин выбрать</div>
+                    <div class="msg msg-bot">Привет! Давай разберёмся 💪 Какой у тебя вес и сколько раз в неделю тренируешься?</div>
+                    <div class="msg msg-user">82кг, тренируюсь 4 раза</div>
+                    <div class="msg msg-bot">Отлично! При твоём режиме рекомендую Akasa Whey Pro — 30г белка на порцию, быстрое усвоение. Принимай в течение 30 мин после тренировки. Хочешь, составлю полный план питания?</div>
+                    <div class="msg msg-user">Давай!</div>
+                    <div class="msg msg-bot">Готово! Отправил тебе план на 3200 ккал/день с учётом 4 тренировок. Включил Akasa BCAA для восстановления. Напомню перед каждой тренировкой 🔥</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ STAGES ════════ -->
+<section id="stages">
+    <div class="container">
+        <div class="tag">Этапы разработки</div>
+        <h2 class="section-title">Три этапа — от бота до полной платформы</h2>
+        <p class="section-subtitle">Каждый этап — самостоятельный рабочий продукт. Вы получаете ценность с первого дня, а не ждёте завершения всего проекта.</p>
+
+        <!-- STAGE 1 -->
+        <div class="stage-block">
+            <div class="stage-header">
+                <div class="stage-num lime">01</div>
+                <div class="stage-title-group">
+                    <h3>Telegram-бот с AI-ассистентом</h3>
+                    <div class="stage-meta">Срок: <span>3–4 недели</span> · Платёж: <span>150 000 ₽</span></div>
+                </div>
+            </div>
+            <div class="stage-content">
+                <p class="stage-desc">Полноценный AI-бот в Telegram с личным кабинетом каждого пользователя. Обученный на материалах Akasa искусственный интеллект, который консультирует, помнит контекст разговора и персонализирует рекомендации.</p>
+
+                <div class="feature-pills">
+                    <span class="pill highlight">AI-консультант по спортпиту</span>
+                    <span class="pill highlight">Обучение на материалах Akasa</span>
+                    <span class="pill">Личный кабинет (БД)</span>
+                    <span class="pill">Планы питания и тренировок</span>
+                    <span class="pill">Подсчёт калорий по фото</span>
+                    <span class="pill">Дневник питания</span>
+                    <span class="pill">Генерация изображений</span>
+                    <span class="pill">Рекомендации продукции Akasa</span>
+                    <span class="pill">Трекинг прогресса</span>
+                    <span class="pill">Проактивные сообщения</span>
+                </div>
+
+                <div class="stage-details">
+                    <div class="detail-item">
+                        <h4>AI-обучение</h4>
+                        <p>Настраиваем AI под бренд Akasa: линейка продуктов, составы, дозировки, совместимость. Бот отвечает как эксперт бренда, не как общий чат-бот.</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4>Память и контекст</h4>
+                        <p>AI помнит цели пользователя, его параметры, историю. Каждый следующий разговор — продолжение предыдущего, а не начало с нуля.</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4>Распознавание еды</h4>
+                        <p>Пользователь фотографирует тарелку — AI определяет блюда, считает калории и БЖУ. Удобный дневник питания прямо в Telegram.</p>
+                    </div>
+                    <div class="detail-item">
+                        <h4>Генерация изображений</h4>
+                        <p>Реалистичные изображения для визуализации целей, мотивации и персональных планов. Уникальный контент для каждого пользователя.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STAGE 2 -->
+        <div class="stage-block">
+            <div class="stage-header">
+                <div class="stage-num teal">02</div>
+                <div class="stage-title-group">
+                    <h3>Web-приложение</h3>
+                    <div class="stage-meta">Срок: <span>3–4 недели</span> · Платёж: <span>150 000 ₽</span></div>
+                </div>
+            </div>
+            <div class="stage-content">
+                <p class="stage-desc">Красивое веб-приложение с расширенным функционалом и личным кабинетом. Полноценный маркетинговый канал для Akasa: анонсы мероприятий, акции, новые продукты, push-уведомления.</p>
+
+                <div class="feature-pills">
+                    <span class="pill highlight">Личный кабинет</span>
+                    <span class="pill highlight">Push-уведомления</span>
+                    <span class="pill">Анонсы мероприятий</span>
+                    <span class="pill">Скидки и акции</span>
+                    <span class="pill">Новые продукты Akasa</span>
+                    <span class="pill">Расширенная аналитика</span>
+                    <span class="pill">Графики прогресса</span>
+                    <span class="pill">Реферальная система</span>
+                    <span class="pill">Адаптивный дизайн</span>
+                    <span class="pill">Админ-панель</span>
+                </div>
+
+                <div class="stage-details">
+                    <div class="detail-item teal">
+                        <h4>Маркетинговый канал</h4>
+                        <p>Анонсы мероприятий, новинки линейки, спецпредложения — всё через push-уведомления. Мгновенный охват всей аудитории, 0 ₽ за рассылку.</p>
+                    </div>
+                    <div class="detail-item teal">
+                        <h4>Красивый интерфейс</h4>
+                        <p>Современный UI с дашбордами, графиками прогресса и интерактивными элементами. Премиальный опыт, соответствующий бренду Akasa.</p>
+                    </div>
+                    <div class="detail-item teal">
+                        <h4>Единый аккаунт</h4>
+                        <p>Один аккаунт = бот + веб-приложение. Пользователь продолжает в браузере то, что начал в Telegram. Бесшовная интеграция.</p>
+                    </div>
+                    <div class="detail-item teal">
+                        <h4>Админ-панель</h4>
+                        <p>Команда Akasa может публиковать контент, управлять акциями, видеть аналитику пользователей и конверсий — всё в одном месте.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STAGE 3 -->
+        <div class="stage-block">
+            <div class="stage-header">
+                <div class="stage-num orange">03</div>
+                <div class="stage-title-group">
+                    <h3>Полноценный сайт Akasa</h3>
+                    <div class="stage-meta">Срок: <span>1–2 недели</span> · Платёж: <span>100 000 ₽</span></div>
+                </div>
+            </div>
+            <div class="stage-content">
+                <p class="stage-desc">Витрина бренда с быстрой авторизацией через QR-код или Telegram-бот. Единая точка входа для всех — новые клиенты знакомятся с брендом, существующие попадают в личный кабинет одним нажатием.</p>
+
+                <div class="feature-pills">
+                    <span class="pill highlight">Вход по QR-коду</span>
+                    <span class="pill highlight">Вход через Telegram</span>
+                    <span class="pill">Каталог продукции</span>
+                    <span class="pill">О бренде</span>
+                    <span class="pill">Блог / контент</span>
+                    <span class="pill">SEO-оптимизация</span>
+                    <span class="pill">Интеграция с web-app</span>
+                    <span class="pill">Мобильная адаптация</span>
+                </div>
+
+                <div class="stage-details">
+                    <div class="detail-item orange">
+                        <h4>QR-авторизация</h4>
+                        <p>Моментальный вход: клиент сканирует QR на мероприятии, в зале или на упаковке — и сразу попадает в экосистему Akasa.</p>
+                    </div>
+                    <div class="detail-item orange">
+                        <h4>Витрина бренда</h4>
+                        <p>Стильный лендинг с каталогом продукции, историей бренда и входом в клуб. Первое, что видит новый клиент — и сразу вовлекается.</p>
+                    </div>
+                    <div class="detail-item orange">
+                        <h4>SEO и органический трафик</h4>
+                        <p>Оптимизация под поисковики. Статьи о питании и тренировках привлекают новых пользователей из Google и Яндекс в экосистему Akasa.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ AI DEEP DIVE ════════ -->
+<section id="ai" class="ai-section">
+    <div class="container">
+        <div class="tag">Искусственный интеллект</div>
+        <h2 class="section-title">AI, обученный на вашем бренде</h2>
+        <p class="section-subtitle">Не общий ChatGPT, а AI-эксперт Akasa. Обучен на ваших продуктах, понимает спортивное питание и помнит каждого клиента.</p>
+
+        <div class="ai-grid">
+            <div class="ai-card featured">
+                <div class="ai-icon">🧠</div>
+                <h3>Обучение на материалах Akasa</h3>
+                <p>Загружаем в AI всю базу знаний: каталог продукции, составы, рекомендации по приёму, совместимость добавок, FAQ. Бот знает линейку Akasa лучше любого консультанта и даёт точные, персонализированные рекомендации каждому пользователю.</p>
+            </div>
+            <div class="ai-card">
+                <div class="ai-icon">💬</div>
+                <h3>Консультация по спортпиту</h3>
+                <p>Какой протеин выбрать? Как принимать BCAA? Что лучше для сушки? AI отвечает мгновенно, рекомендуя именно продукцию Akasa в контексте целей клиента.</p>
+            </div>
+            <div class="ai-card">
+                <div class="ai-icon">🏋️</div>
+                <h3>Планы тренировок</h3>
+                <p>Персональные программы тренировок с учётом уровня подготовки, целей и доступного оборудования. AI адаптирует план на основе обратной связи.</p>
+            </div>
+            <div class="ai-card">
+                <div class="ai-icon">📸</div>
+                <h3>Подсчёт калорий по фото</h3>
+                <p>Сфотографировал еду — получил разбор: калории, белки, жиры, углеводы. AI ведёт дневник питания и сравнивает с дневной нормой пользователя.</p>
+            </div>
+            <div class="ai-card">
+                <div class="ai-icon">🎨</div>
+                <h3>Генерация изображений</h3>
+                <p>Реалистичные визуализации для мотивации: как может выглядеть результат через 3 месяца, персональные карточки прогресса, уникальный контент.</p>
+            </div>
+            <div class="ai-card">
+                <div class="ai-icon">📓</div>
+                <h3>Дневник питания</h3>
+                <p>Ежедневный трекинг питания с автоматическим подсчётом макронутриентов. AI напоминает о приёмах пищи и корректирует план по ходу дня.</p>
+            </div>
+            <div class="ai-card">
+                <div class="ai-icon">🔔</div>
+                <h3>Проактивное общение</h3>
+                <p>Бот сам пишет пользователю: напоминает о тренировке, спрашивает о самочувствии, предлагает корректировки. Не ждёт — инициирует диалог.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ BENEFITS ════════ -->
+<section class="benefits">
+    <div class="container">
+        <div class="tag teal">Выгоды для Akasa</div>
+        <h2 class="section-title">Что получает бренд</h2>
+        <p class="section-subtitle">Akasa Club — не расход, а инвестиция. Каждый элемент экосистемы работает на рост продаж, удержание клиентов и укрепление бренда.</p>
+
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-marker">📈</div>
+                <div>
+                    <h3>Рост повторных продаж</h3>
+                    <p>AI рекомендует продукцию Akasa в контексте персонального плана — как часть программы, а не рекламу. Конверсия в разы выше таргета.</p>
+                </div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-marker">🔄</div>
+                <div>
+                    <h3>Увеличение LTV клиента</h3>
+                    <p>Из разового покупателя — в члена клуба, который остаётся в экосистеме месяцами. Постоянная коммуникация, постоянные покупки.</p>
+                </div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-marker">📊</div>
+                <div>
+                    <h3>Данные о клиентах</h3>
+                    <p>Цели, диета, активность, предпочтения — точный портрет аудитории. Данные для маркетинга, разработки новых продуктов и сегментации.</p>
+                </div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-marker">📲</div>
+                <div>
+                    <h3>Бесплатный канал коммуникации</h3>
+                    <p>Push-уведомления и сообщения в боте — мгновенный охват аудитории. Анонсы, акции, мероприятия без расходов на рекламу.</p>
+                </div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-marker">🏆</div>
+                <div>
+                    <h3>Конкурентное преимущество</h3>
+                    <p>Ни один производитель спортпитания в СНГ не предлагает AI-ассистента. Akasa будет первым — и это преимущество, которое сложно скопировать.</p>
+                </div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-marker">🚀</div>
+                <div>
+                    <h3>Виральный рост</h3>
+                    <p>Реферальная система, результаты «до/после», уникальный AI-опыт — пользователи сами рассказывают о клубе. Органический рост без бюджета.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ PRICING ════════ -->
+<section id="pricing" class="pricing-section">
+    <div class="container">
+        <div class="tag">Стоимость</div>
+        <h2 class="section-title">Прозрачная стоимость</h2>
+        <p class="section-subtitle" style="margin-left:auto;margin-right:auto;">Разработка всей экосистемы — от Telegram-бота до полноценного сайта. Оплата поэтапно, по мере готовности каждого продукта.</p>
+
+        <div class="pricing-total">
+            <div class="pricing-amount">400 000 ₽</div>
+            <div class="pricing-label">полная стоимость разработки · срок 2 месяца</div>
+
+            <div class="pricing-split">
+                <div class="split-item">
+                    <div class="split-item-phase c1">Этап 1 · Бот</div>
+                    <div class="split-item-amount">150 000 ₽</div>
+                </div>
+                <div class="split-item">
+                    <div class="split-item-phase c2">Этап 2 · Web-App</div>
+                    <div class="split-item-amount">150 000 ₽</div>
+                </div>
+                <div class="split-item">
+                    <div class="split-item-phase c3">Этап 3 · Сайт</div>
+                    <div class="split-item-amount">100 000 ₽</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pricing-support">
+            <div class="pricing-support-icon">🛡️</div>
+            <div class="pricing-support-text">
+                <strong>10 000 ₽/мес</strong>
+                <p>Поддержка, обновления и улучшения после запуска</p>
+            </div>
+        </div>
+
+        <!-- TIMELINE -->
+        <div style="margin-top: 56px;">
+            <h3 style="font-family: 'Unbounded', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 20px; color: var(--text-secondary);">График разработки</h3>
+            <div class="timeline-bar">
+                <div class="tl-seg s1">Telegram-бот + AI</div>
+                <div class="tl-seg s2">Web-приложение</div>
+                <div class="tl-seg s3">Сайт</div>
+            </div>
+            <div class="tl-labels">
+                <div class="tl-label l1">Недели 1–4</div>
+                <div class="tl-label l2">Недели 3–7</div>
+                <div class="tl-label l3">Недели 7–8</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ SUPPORT & GUARANTEES ════════ -->
+<section>
+    <div class="container">
+        <div class="tag teal">Гарантии</div>
+        <h2 class="section-title">Поддержка и развитие</h2>
+        <p class="section-subtitle">Проект не заканчивается после запуска. Мы остаёмся на связи и продолжаем развивать экосистему вместе с вами.</p>
+
+        <div class="guarantee-grid">
+            <div class="guarantee-item">
+                <div class="guarantee-icon">🛡️</div>
+                <h4>Ежемесячная поддержка</h4>
+                <p>Мониторинг серверов, исправление багов, обновление зависимостей, оптимизация производительности. Всё включено в 10 000 ₽/мес.</p>
+            </div>
+            <div class="guarantee-item">
+                <div class="guarantee-icon">🔄</div>
+                <h4>Регулярные улучшения</h4>
+                <p>Новые функции, улучшение AI, доработки интерфейса по вашим пожеланиям. Продукт становится лучше каждый месяц.</p>
+            </div>
+            <div class="guarantee-item">
+                <div class="guarantee-icon">📊</div>
+                <h4>Отчёты и аналитика</h4>
+                <p>Ежемесячные отчёты о работе системы: количество пользователей, активность, конверсии. Прозрачность на каждом этапе.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ FUTURE ROADMAP ════════ -->
+<section id="roadmap">
+    <div class="container">
+        <div class="tag pink">Дальнейшее развитие</div>
+        <h2 class="section-title">Роадмап после запуска</h2>
+        <p class="section-subtitle">Akasa Club — платформа, которая растёт вместе с брендом. Вот что можно добавить после завершения трёх основных этапов.</p>
+
+        <div class="future-grid">
+            <div class="future-card">
+                <div class="fc-label">Мобильное приложение</div>
+                <h4>iOS & Android</h4>
+                <p>Нативное приложение с push-уведомлениями, офлайн-режимом и интеграцией с Apple Health / Google Fit.</p>
+            </div>
+            <div class="future-card">
+                <div class="fc-label">Геймификация</div>
+                <h4>Уровни и достижения</h4>
+                <p>Бейджи, челленджи, таблица лидеров. Мотивация через игровые механики — пользователи вовлекаются и возвращаются.</p>
+            </div>
+            <div class="future-card">
+                <div class="fc-label">Комьюнити</div>
+                <h4>Социальные функции</h4>
+                <p>Профили пользователей, чаты, общие челленджи. Akasa Club как сообщество единомышленников.</p>
+            </div>
+            <div class="future-card">
+                <div class="fc-label">E-Commerce</div>
+                <h4>Встроенный магазин</h4>
+                <p>Покупка продукции Akasa прямо из бота и веб-приложения. Персональные рекомендации → один клик → покупка.</p>
+            </div>
+            <div class="future-card">
+                <div class="fc-label">Интеграции</div>
+                <h4>Фитнес-трекеры</h4>
+                <p>Подключение к умным часам и трекерам. Автоматический импорт тренировок, шагов, пульса и сна.</p>
+            </div>
+            <div class="future-card">
+                <div class="fc-label">Партнёрства</div>
+                <h4>Тренеры и залы</h4>
+                <p>Платформа для партнёрских программ: фитнес-клубы, тренеры, нутрициологи интегрируются в экосистему Akasa.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ CTA ════════ -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title">Готовы запустить<br><span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Akasa Club?</span></h2>
+        <p class="cta-desc">Две минуты на встречу — и через 2 месяца у Akasa будет цифровая экосистема, которой нет ни у одного конкурента.</p>
+        <button class="cta-primary" onclick="window.open('https://t.me/s_bigulov', '_blank')">
+            Обсудить запуск
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+    </div>
+</section>
+
+<!-- ════════ FOOTER ════════ -->
+<footer>
+    <div class="container">
+        <div class="footer-brand">Akasa Club</div>
+        <p>Коммерческое предложение · 2025</p>
+        <p style="margin-top: 8px; font-size: 0.75rem;">Данный документ является конфиденциальным и подготовлен специально для бренда Akasa</p>
+    </div>
+</footer>
+
+</body>
+</html>
